@@ -1,0 +1,40 @@
+import { alerts } from "@/libs/alerts";
+import axios from "axios";
+import { useEffect, useState } from "react";
+
+export default function useProvince() {
+  const [provinces, setProvinces] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [provinceOptions, setProvinceOptions] = useState([]);
+
+  const fetchProvinces = async () => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        "https://raw.githubusercontent.com/kongvut/thai-province-data/refs/heads/master/api/latest/province_with_district_and_sub_district.json"
+      );
+      const province = res.data;
+      setProvinces(province);
+      const options = province.map((p) => ({
+        label: p.name_th,
+        value: p.name_th,
+      }));
+      setProvinceOptions(options);
+    } catch (err) {
+      console.error(err);
+      alerts.err();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProvinces();
+  }, []);
+
+  return {
+    provinces,
+    loading,
+    provinceOptions,
+  };
+}

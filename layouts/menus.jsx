@@ -1,0 +1,219 @@
+"use client";
+import { apiConfig } from "@/config/api.config";
+import useGetSession from "@/hook/useGetSeesion";
+import { alerts } from "@/libs/alerts";
+import axios from "axios";
+import {
+  BriefcaseBusiness,
+  ChartPie,
+  CircleUser,
+  HelpCircle,
+  LogOut,
+  MenuIcon,
+  MessageCircle,
+  Newspaper,
+  Search,
+  ShieldUser,
+  User,
+  UserPen,
+  Users,
+  X,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { usePathname, useRouter } from "next/navigation";
+import { useState } from "react";
+
+const Menu = () => {
+  const path = usePathname();
+  const { user } = useGetSession();
+  const router = useRouter();
+
+  const menus = [
+    {
+      title: "ภาพรวม",
+      icon: <ChartPie size={20} />,
+      url: "/users/dashboard",
+      allowed: [2, 3, 4],
+    },
+    {
+      title: "โปรไฟล์",
+      icon: <UserPen size={20} />,
+      url: "/users/profile",
+      allowed: [1, 2, 3, 4],
+    },
+    {
+      title: "ความเป็นส่วนตัว",
+      icon: <ShieldUser size={20} />,
+      url: "/users/privacy",
+      allowed: [1, 2, 3, 4],
+    },
+    {
+      title: "ประวัติการทำงาน",
+      icon: <BriefcaseBusiness size={20} />,
+      url: "/users/work-history",
+      allowed: [1],
+    },
+    {
+      title: "ค้นหา",
+      icon: <Search size={20} />,
+      url: "/users/search",
+      allowed: [1, 2, 3, 4],
+    },
+    {
+      title: "ข่าวสาร/บริจาค",
+      icon: <Newspaper size={20} />,
+      url: "/users/news",
+      allowed: [1, 2, 3, 4],
+    },
+    {
+      title: "บัญชี",
+      icon: <CircleUser size={20} />,
+      url: "/users/account",
+      allowed: [1, 2, 3, 4],
+    },
+    {
+      title: "รายชื่อศิษย์เก่า",
+      icon: <User size={20} />,
+      url: "/alumni-president/alumni-manage",
+      allowed: [5],
+    },
+    {
+      title: "ส่งข้อความ",
+      icon: <MessageCircle size={20} />,
+      url: "/alumni-president/message",
+      allowed: [5],
+    },
+    {
+      title: "ข่าวสาร/การบริจาค",
+      icon: <Newspaper size={20} />,
+      url: "/alumni-president/alumni-news",
+      allowed: [5],
+    },
+    {
+      title: "ช่วยเหลือ",
+      icon: <HelpCircle size={20} />,
+      url: "/users/help",
+      allowed: [1, 2, 3, 4],
+    },
+    {
+      title: "ช่วยเหลือ",
+      icon: <HelpCircle size={20} />,
+      url: "/alumni-president/help",
+      allowed: [5],
+    },
+  ];
+
+  const [showResponsive, setShowResponsive] = useState(false);
+
+  const logout = async () => {
+    const { isConfirmed } = await alerts.confirmDialog(
+      "ออกจากระบบ",
+      "ต้องการออกจากระบบหรือไม่?",
+      "ออกจากระบบ"
+    );
+    if (!isConfirmed) return;
+
+    try {
+      const res = await axios.get(apiConfig.rmuAPI + "/auth/log-out", {
+        withCredentials: true,
+      });
+      if (res?.status === 200) {
+        alerts.success("ออกจากระบบแล้ว!");
+        router.push("/");
+      }
+    } catch (error) {
+      console.error(error);
+      alerts.err();
+    }
+  };
+
+  return (
+    <>
+      <div
+        className={`p-3 lg:flex ${
+          showResponsive ? "flex w-[80%] absolute top-0" : "hidden"
+        } w-1/5 h-full flex-col border-r justify-between border-gray-200 bg-gray-800 shadow-md z-[100]`}
+      >
+        <div className="w-full flex flex-col">
+          <div className="flex items-center w-full gap-4 pb-3 p-1 border-b border-gray-600">
+            {user?.roleId < 5 && (
+              <Link
+                href="/users/profile"
+                className="w-[50px] h-[50px] overflow-hidden rounded-full border border-gray-300"
+              >
+                <Image
+                  alt="user-profile"
+                  priority
+                  src={
+                    user?.profile
+                      ? apiConfig.imgAPI + user?.profile
+                      : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                  }
+                  width={50}
+                  height={50}
+                  className="w-full h-full object-cover"
+                />
+              </Link>
+            )}
+
+            <span className="flex flex-col ">
+              <p className="text-blue-400 text-sm">ยินดีต้อนรับ!</p>
+              {user?.roleId < 5 && (
+                <p className="text-white">คุณ{user?.fname}</p>
+              )}
+            </span>
+            {showResponsive && (
+              <button
+                onClick={() => setShowResponsive(false)}
+                className="absolute top-3 right-5"
+              >
+                <X size={28} color="white" />
+              </button>
+            )}
+          </div>
+          <label htmlFor="" className="my-4 text-sm text-gray-300">
+            เมนู
+          </label>
+          {menus
+            .filter((m) => m.allowed.includes(user?.roleId))
+            .map((m, index) => (
+              <Link
+                onClick={() => setShowResponsive(false)}
+                key={index}
+                className={`flex items-center gap-3  text-gray-100 transition-all duration-300 ${
+                  path.split("/")[2] === m.url.split("/")[2] && "bg-blue-500"
+                } hover:bg-blue-600 mt-0.5 rounded-lg w-full p-3.5`}
+                href={m.url}
+              >
+                {m.icon}
+                {m.title}
+              </Link>
+            ))}
+          <button
+            onClick={logout}
+            className="flex items-center gap-3  text-gray-100 transition-all duration-300 bg-red-500 mt-1 rounded-lg w-full p-3.5"
+          >
+            <LogOut size={20} color="white" />
+            <p>ออกจากระบบ</p>
+          </button>
+        </div>
+
+        {/* developby */}
+        <div className="w-full items-start flex flex-col mb-2">
+          <p className="text-gray-100 text-xs">พัฒนาโดย</p>
+          <p className="text-gray-100 text-xs">นายปฐมพร วงสุวรรณ 096-5850195</p>
+        </div>
+      </div>
+
+      {/* responsive button */}
+      <button
+        onClick={() => setShowResponsive(!showResponsive)}
+        className="lg:hidden inline fixed z-[100] bg-white top-3 right-5 p-1.5 rounded-full hover:bg-blue-200"
+      >
+        <MenuIcon size={28} />
+      </button>
+    </>
+  );
+};
+export default Menu;

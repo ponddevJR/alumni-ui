@@ -1,0 +1,190 @@
+"use client";
+import { departmentText, facultyText } from "@/components/faculty-p";
+import Loading from "@/components/loading";
+import NoData from "@/components/nodata";
+import { apiConfig } from "@/config/api.config";
+import { useAppContext } from "@/context/app.context";
+import useGetSession from "@/hook/useGetSeesion";
+import { alerts } from "@/libs/alerts";
+import axios from "axios";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { useDashboardContext } from "../dashboard-context";
+import { v4 as uuid } from "uuid";
+
+const { default: TablePage } = require("@/components/table-page");
+
+const Page = () => {
+  const { user } = useGetSession();
+  const router = useRouter();
+  const { setPrevPath } = useAppContext();
+
+  const [data, setData] = useState([]);
+  const [totalPage, setTotalPage] = useState();
+  const [total, setTotal] = useState(0);
+
+  // ✅ ควบคุม pagination/filter state ที่นี่ (parent)
+  const [page, setPage] = useState(1);
+  const [take, setTake] = useState(25);
+  const [search, setSearch] = useState("");
+  const [sort, setSort] = useState(JSON.stringify({ year_start: "desc" }));
+  const [facultyId, setFacultyId] = useState("");
+  const [departmentId, setDepartmentId] = useState("");
+  const [filterWork, setFilterWork] = useState({});
+  const {
+    selectYearStart,
+    setSelectYearStart,
+    selectYearEnd,
+    setSelectYearEnd,
+  } = useDashboardContext();
+
+  useEffect(() => {
+    setFacultyId(user?.roleId <= 3 ? `${user?.facultyId}` : "");
+    setDepartmentId(user?.roleId < 3 ? `${user?.departmentId}` : "");
+  }, [user]);
+
+  const [loading, setLoading] = useState(false);
+
+  const fetchData = async (
+    page = 1,
+    take = 25,
+    search = "",
+    facultyId = "",
+    departmentId = "",
+    sort,
+    selectYearStart,
+    selectYearEnd,
+    current = {}
+  ) => {
+    setLoading(true);
+    try {
+      const res = await axios.get(
+        apiConfig.rmuAPI + "/dashboard/list/work-other-country-list",
+        {
+          withCredentials: true,
+          params: {
+            page,
+            take,
+            search,
+            facultyId,
+            departmentId,
+            sort,
+            selectYearStart,
+            selectYearEnd,
+            current,
+          },
+        }
+      );
+      if (res.status === 200) {
+        setData(res.data.result);
+        setTotalPage(res.data.totalPage);
+        setTotal(res.data.total);
+      }
+    } catch (error) {
+      console.error(error);
+      alerts.err();
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <>
+      <TablePage
+        header="รายชื่อศิษย์เก่าที่เคยทำงานที่ต่างประเทศ"
+        theads={["ตำแหน่งงาน", "บริษัท", "ประเทศ"]}
+        fetchData={fetchData}
+        totalPage={totalPage}
+        total={total}
+        exportData={data.map((d) => ({
+          รหัสนักศึกษา: d?.alumni_id,
+          คำนำหน้า: d?.prefix,
+          ชื่อ: d?.fname,
+          นามสกุล: d?.lname,
+          คณะ: facultyText(d?.facultyId),
+          สาขาวิชา: departmentText(d?.departmentId),
+          "ปีที่การศึกษา(พ.ศ.)": `${d?.year_start} - ${d?.year_end}`,
+          ตำแหน่งงาน: d?.work_expreriences[0]?.job_position,
+          บริษัท: d?.work_expreriences[0]?.company_name,
+          ประเทศ: d?.work_expreriences[0]?.company_place,
+        }))}
+        // ✅ ควบคุม state จาก parent
+        page={page}
+        setPage={setPage}
+        take={take}
+        setTake={setTake}
+        sort={sort}
+        setSort={setSort}
+        search={search}
+        setSearch={setSearch}
+        facultyId={facultyId}
+        setFacultyId={setFacultyId}
+        departmentId={departmentId}
+        setDepartmentId={setDepartmentId}
+        extraFilter={filterWork}
+        setExtraFilter={setFilterWork}
+        selectYearEnd={selectYearEnd}
+        selectYearStart={selectYearStart}
+        setSelectYearEnd={setSelectYearEnd}
+        setSelectYearStart={setSelectYearStart} // ✅ optional filter
+      >
+        {loading ? (
+          <tr>
+            <td className="p-2" colSpan={6}>
+              <div className="flex justify-center items-center py-20 flex-col gap-2">
+                <Loading type={2} />
+                <p className="text-sm">กำลังโหลด...</p>
+              </div>
+            </td>
+          </tr>
+        ) : data.length > 0 ? (
+          data.map((d,index) => (
+            <tr
+              key={uuid()}
+              onClick={() => {
+                setPrevPath("/users/dashboard/work-unemployed");
+                router.push(`/users/search/${d?.alumni_id}/1`);
+              }}
+              className="border-b border-gray-200 cursor-pointer hover:bg-gray-100 text-sm"
+            >
+              <td className="p-2.5 py-3 text-start">
+                {index + (page - 1) * take + 1}
+              </td>
+              <td className="p-2.5 py-3 text-start">
+                {d?.prefix}
+                {d?.fname} {d?.lname}
+              </td>
+              <td className="p-2.5 py-3 text-start">
+                {facultyText(d?.facultyId)}
+              </td>
+              <td className="p-2.5 py-3 text-start">
+                {departmentText(d?.departmentId)}
+              </td>
+              <td className="p-2.5 py-3 text-start">
+                {d?.year_start} - {d?.year_end}
+              </td>
+              <td className="p-2.5 py-3">
+                {d?.work_expreriences[0]?.job_position}
+              </td>
+              <td className="p-2.5 py-3">
+                {d?.work_expreriences[0]?.company_name}
+              </td>
+              <td className="p-2.5 py-3">
+                {d?.work_expreriences[0]?.company_place}
+              </td>
+            </tr>
+          ))
+        ) : (
+          <tr>
+            <td className="p-2" colSpan={7}>
+              <div className="flex justify-center items-center py-20 flex-col gap-2">
+                <NoData bg={1} />
+              </div>
+            </td>
+          </tr>
+        )}
+      </TablePage>
+    </>
+  );
+};
+export default Page;
