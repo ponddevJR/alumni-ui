@@ -1,6 +1,7 @@
 "use client";
 import Loading from "@/components/loading";
 import { apiConfig } from "@/config/api.config";
+import useGetSession from "@/hook/useGetSeesion";
 import { alerts } from "@/libs/alerts";
 import {
   formatPhoneNumber,
@@ -19,37 +20,67 @@ import {
   Plus,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-const Contact = ({ p1, p2, e1, e2, f, reload, roleId }) => {
-  const [editing, setEditing] = useState(
-    !p1 && !p2 && !e1 && !e2 && !f ? true : false
-  );
+const Contact = ({reload}) => {
+  const { user } = useGetSession();
+  const [editing, setEditing] = useState(false);
   const [updating, setUpdating] = useState(false);
 
-  const [showOtherPhone, setShowOtherPhone] = useState(!!p2);
-  const [showOtherEmail, setShowOtherEmail] = useState(!!e2);
+  const [showOtherPhone, setShowOtherPhone] = useState(true);
+  const [showOtherEmail, setShowOtherEmail] = useState(true);
 
-  const [phone1, setPhone1] = useState(p1 ? p1 : p2 || "");
-  const [phone2, setPhone2] = useState(p2 || "");
-  const [email1, setEmail1] = useState(!e1 ? e2 : e1 || "");
-  const [email2, setEmail2] = useState(e2 || "");
-  const [facebook, setFacebook] = useState(f || "");
+  const [phone1, setPhone1] = useState("");
+  const [phone2, setPhone2] = useState("");
+  const [email1, setEmail1] = useState("");
+  const [email2, setEmail2] = useState("");
+  const [facebook, setFacebook] = useState("");
+
+  const [load, setLoad] = useState(false);
+  const fetchUserContract = async () => {
+    setLoad(true);
+    try {
+      const res = await axios.get(apiConfig.rmuAPI + `/alumni/contract`, {
+        withCredentials: true,
+      });
+      if (res.status === 200) {
+        const { phone1, phone2, email1, email2, facebook } = res.data;
+        setPhone1(phone1 || "");
+        setPhone2(phone2 || "");
+        setEmail1(email1 || "");
+        setEmail2(email2 || "");
+        setFacebook(facebook || "");
+        if (!phone1 && !phone2 && !email1 && !email2 && !facebook) {
+          setEditing(true);
+        }
+        if (!phone1 || !phone2) {
+          setShowOtherPhone(true);
+        }
+        if (!email1 || !email2) {
+          setShowOtherEmail(true);
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      alerts.err();
+    } finally {
+      setLoad(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserContract();
+  }, []);
 
   const cancelEditing = () => {
     setEditing(false);
-    if (!p2) {
+    fetchUserContract();
+    if (!phone2) {
       setShowOtherPhone(false);
     }
-    if (!e2) {
+    if (!email2) {
       setShowOtherEmail(false);
     }
-
-    setPhone1(p1 ? p1 : p2 || "");
-    setPhone2(p2);
-    setEmail1(!e1 ? e2 : e1 || "");
-    setEmail2(e2 || "");
-    setFacebook(f || "");
   };
 
   const updateContact = async () => {
@@ -96,6 +127,7 @@ const Contact = ({ p1, p2, e1, e2, f, reload, roleId }) => {
       if (res?.status === 200) {
         await alerts.success();
         cancelEditing();
+        fetchUserContract();
         reload();
       }
     } catch (error) {
@@ -105,6 +137,14 @@ const Contact = ({ p1, p2, e1, e2, f, reload, roleId }) => {
       setUpdating(false);
     }
   };
+
+  if (load)
+    return (
+      <div className="w-full flex flex-col items-center  gap-2 py-10">
+        <Loading type={2} />
+        <p>กำลังโหลด...</p>
+      </div>
+    );
 
   return (
     <div className="w-full flex flex-col">
@@ -193,7 +233,7 @@ const Contact = ({ p1, p2, e1, e2, f, reload, roleId }) => {
         <Mail size={18} color="blue" />
         <div className="w-full lg:w-1/2 flex items-start flex-col gap-0.5">
           <p className="text-sm text-gray-500">อีเมล</p>
-          {roleId < 2 &&
+          {user?.roleId < 2 &&
             (email1?.includes("@rmu.ac.th") ||
               email2?.includes("@rmu.ac.th")) && (
               <span className="flex items-center gap-2 my-1">

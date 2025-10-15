@@ -71,7 +71,7 @@ const renderCustomizedLabel = ({
       <text
         x={cx + (outerRadius + 20) * Math.cos(-midAngle * RADIAN)}
         y={cy + (outerRadius + 20) * Math.sin(-midAngle * RADIAN)}
-        fill="#fff"
+        fill="#000"
         textAnchor={x > cx ? "start" : "end"}
         dominantBaseline="central"
         fontSize={15}
@@ -90,7 +90,7 @@ const WorkPlaceRatePieChartComponent = ({ data, openToolTip }) => {
   }));
 
   return (
-    <div style={{ width: "100%", height: 500 }}>
+    <div style={{ width: "100%", height: 250 }}>
       <ResponsiveContainer width="100%" height="100%">
         <PieChart width={800} height={500}>
           <Pie

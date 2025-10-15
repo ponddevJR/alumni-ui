@@ -147,7 +147,7 @@ const UserDetail = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-br from-sky-50 via-green-50 to-blue-200 w-full flex flex-col p-2">
+      <div className="bg-gradient-to-br from-sky-50 via-green-50 to-blue-200 w-full flex flex-col p-8">
         <button
           onClick={() => {
             router.push(prevPath || "/users/search");
@@ -165,7 +165,6 @@ const UserDetail = () => {
             <div className="overflow-hidden w-[120px] h-[120px] border-4 border-white shadow-md rounded-full bg-gray-200">
               <img
                 alt="profile"
-                priority
                 className="w-full h-full object-cover"
                 width={50}
                 height={50}
@@ -328,7 +327,7 @@ const UserDetail = () => {
 
                 <div className="w-full flex lg:flex-row gap-5 flex-col my-3">
                   <div className="flex flex-col">
-                    <p className="mt-5 pb-3 border-b border-gray-300">
+                    <p className="mt-8 pb-3 border-b border-gray-300">
                       ช่องทางติดต่อ
                     </p>
                     <div className="grid lg:grid-cols-2 grid-cols-1 gap-3 gap-y-2 flex-wrap items-center">

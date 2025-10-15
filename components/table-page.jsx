@@ -48,7 +48,8 @@ const TablePage = ({
   selectYearStart,
   selectYearEnd,
   extraFilter = {},
-  setExtraFilter, // ✅ optional filter
+  setExtraFilter,
+  showExportBtn = true, // ✅ optional filter
 }) => {
   const { user } = useGetSession();
   const { faculty, department, setFaculty, setDepartment } =
@@ -122,17 +123,19 @@ const TablePage = ({
   return (
     <>
       <div className="w-full items-start flex flex-col px-5 pt-3">
-        <button
-          onClick={() => {
-            setFaculty(null);
-            setDepartment(null);
-            setPrevPath("");
-            router.push("/users/dashboard");
-          }}
-          className="w-fit flex items-center gap-2"
-        >
-          <ArrowLeft size={20} color="blue" />
-        </button>
+        {user?.roleId < 5 && (
+          <button
+            onClick={() => {
+              setFaculty(null);
+              setDepartment(null);
+              setPrevPath("");
+              router.push("/users/dashboard");
+            }}
+            className="w-fit flex items-center gap-2"
+          >
+            <ArrowLeft size={20} color="blue" />
+          </button>
+        )}
 
         <span className="w-full flex flex-col lg:flex-row lg:items-end gap-2 justify-between lg:border-b lg:pb-3 lg:border-gray-300">
           <div className="flex flex-col mt-2">
@@ -269,6 +272,9 @@ const TablePage = ({
               value={take}
               className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
             >
+              <option value={10} className="text-sm">
+                10
+              </option>
               <option value={25} className="text-sm">
                 25
               </option>
@@ -301,13 +307,13 @@ const TablePage = ({
                 value={JSON.stringify({ year_start: "desc" })}
                 className="text-sm"
               >
-                ปีที่เข้ารับการศึกษา (มากไปน้อย)
+                ปีที่การศึกษาปัจจุบัน
               </option>
               <option
                 value={JSON.stringify({ year_start: "asc" })}
                 className="text-sm"
               >
-                ปีที่เข้ารับการศึกษา (น้อยไปมาก)
+                ปีที่การศึกษาอดีต
               </option>
             </select>
             <label
@@ -319,10 +325,10 @@ const TablePage = ({
             </label>
           </div>
 
-          <ExportBtn exportname={header} data={exportData} />
+          {showExportBtn && <ExportBtn exportname={header} data={exportData} />}
         </div>
 
-        <div className="lg:w-full w-auto overflow-x-auto h-[450px] overflow-y-auto rounded-tl pb-3">
+        <div className="lg:w-full w-auto overflow-x-auto h-auto overflow-y-auto rounded-tl pb-3">
           <table className="lg:w-full w-auto">
             <thead>
               <tr className="sticky top-0 bg-white z-30">
@@ -354,23 +360,25 @@ const TablePage = ({
           </table>
         </div>
 
-        <div className="w-full justify-end flex items-center mt-3 gap-4">
-          <button
-            onClick={prevPage}
-            className="p-2 rounded-full shadow-md text-sm text-white bg-blue-500 hover:bg-blue-600"
-          >
-            <ChevronLeft size={18} />
-          </button>
-          <p>
-            หน้า {page} จาก {totalPage}
-          </p>
-          <button
-            onClick={forwardPage}
-            className="p-2 rounded-full shadow-md text-sm text-white bg-blue-500 hover:bg-blue-600"
-          >
-            <ChevronRight size={18} />
-          </button>
-        </div>
+        {totalPage > 1 && (
+          <div className="w-full justify-end flex items-center my-3.5 gap-4">
+            <button
+              onClick={prevPage}
+              className="p-2 rounded-full shadow-md text-sm text-white bg-blue-500 hover:bg-blue-600"
+            >
+              <ChevronLeft size={18} />
+            </button>
+            <p>
+              หน้า {page} จาก {totalPage}
+            </p>
+            <button
+              onClick={forwardPage}
+              className="p-2 rounded-full shadow-md text-sm text-white bg-blue-500 hover:bg-blue-600"
+            >
+              <ChevronRight size={18} />
+            </button>
+          </div>
+        )}
       </div>
       <Modal></Modal>
     </>

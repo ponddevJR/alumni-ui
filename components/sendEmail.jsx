@@ -22,8 +22,8 @@ const SendEmail = ({ show, onclose, sendToData, type }) => {
     setSending(true);
     try {
       const payload = {
-        id: type < 2 ? sendToData?.alumni_id : sendToData?.professor_id,
-        roleId: type,
+        id: sendToData?.alumni_id,
+        roleId: 1,
         text,
         sendMyContact,
       };

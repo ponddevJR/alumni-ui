@@ -168,7 +168,7 @@ const WorkHistory = () => {
         return alerts.err();
       }
       if (res?.status === 200) {
-        await alerts.success();
+        alerts.success();
         setIsCurrentJob(false);
         setWorkInThai(false);
         setShowJobForm(false);
@@ -197,19 +197,24 @@ const WorkHistory = () => {
     search = "",
     dataType = 0,
     page = 1,
-    sort = JSON.stringify({ createdAt: "desc" })
+    sort = JSON.stringify({ createdAt: "desc" }),
+    user
   ) => {
     setFetching(true);
     try {
-      const res = await axios.get(apiConfig.rmuAPI + `/alumni/work-list`, {
-        withCredentials: true,
-        params: {
-          search,
-          type: dataType,
-          page,
-          sort,
-        },
-      });
+      const res = await axios.get(
+        apiConfig.rmuAPI + `/alumni/work-list/${user?.id}`,
+        {
+          withCredentials: true,
+          params: {
+            search,
+            type: dataType,
+            page,
+            sort,
+          },
+        }
+      );
+      console.log(user);
       if (res.status === 200) {
         setDataAvg(res?.data?.dataAvg);
         setExperience(res?.data?.workExprerience);
@@ -226,36 +231,11 @@ const WorkHistory = () => {
   const debounceSearch = useMemo(() => debounce(fetchWorkExprerience, 500), []);
 
   useEffect(() => {
-    debounceSearch(searchText, dataType, page, sort);
-  }, [searchText, dataType, page, sort]);
-
-  const deleteWork = async (id) => {
-    const { isConfirmed } = await alerts.confirmDialog(
-      "ลบประวัติ",
-      "ต้องการลบประวัตินี้หรือไม่?"
-    );
-    if (!isConfirmed) return;
-
-    setSaving(true);
-    try {
-      const res = await axios.delete(
-        apiConfig.rmuAPI + "/alumni/work-delete/" + id,
-        { withCredentials: true }
-      );
-      if (res?.status === 200) {
-        alerts.success("ลบข้อมูลแล้ว");
-        fetchWorkExprerience(searchText);
-      }
-    } catch (error) {
-      console.error(error);
-      alerts.err();
-    } finally {
-      setSaving(false);
-    }
-  };
+    debounceSearch(searchText, dataType, page, sort, user);
+  }, [searchText, dataType, page, sort, user]);
 
   return (
-    <>
+    <div className="w-full flex flex-col p-5">
       <div className="w-full flex flex-col p-2 bg-gradient-to-r from-gray-50 via-sky-50 to-green-50 mb-5 pl-2">
         <span className="w-full mb-7 flex items-center justify-between">
           <label htmlFor="" className="flex flex-col">
@@ -420,8 +400,8 @@ const WorkHistory = () => {
               e?.continued_study ? (
                 <StudyCard
                   e={e}
-                  deleteWork={deleteWork}
                   handleEdit={handleEdit}
+                  fetchWorkExprerience={() => fetchWorkExprerience(searchText)}
                   key={uuid()}
                 />
               ) : (
@@ -429,7 +409,7 @@ const WorkHistory = () => {
                   key={uuid()}
                   e={e}
                   handleEdit={handleEdit}
-                  deleteWork={deleteWork}
+                  fetchWorkExprerience={() => fetchWorkExprerience(searchText)}
                 />
               )
             )}
@@ -1104,7 +1084,7 @@ const WorkHistory = () => {
           </button>
         </form>
       </Modal>
-    </>
+    </div>
   );
 };
 export default WorkHistory;

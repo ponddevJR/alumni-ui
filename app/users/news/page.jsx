@@ -121,7 +121,7 @@ const Page = () => {
   }, []);
 
   return (
-    <div className="w-full flex flex-col p-2">
+    <div className="w-full flex flex-col p-5">
       <FadeInSection className="flex items-center flex-col lg:flex-row gap-2 pb-2 w-full border-b border-gray-300">
         <Image width={80} height={80} alt="logo" priority src={logo} />
         <div className="flex flex-col lg:items-start items-center">

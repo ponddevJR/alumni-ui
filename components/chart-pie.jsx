@@ -1,36 +1,44 @@
 "use client";
 import { Cell, Pie, PieChart, ResponsiveContainer, Tooltip } from "recharts";
 
-const COLORS = [
-  "#0088FE", // น้ำเงิน
-  "#00C49F", // เขียวมิ้นต์
-  "#FFBB28", // เหลือง
-  "#FF8042", // ส้ม
-  "#8884D8", // ม่วงอ่อน
-  "#82CA9D", // เขียวอ่อน
-  "#FFC658", // เหลืองทอง
-  "#FF7C7C", // แดงอ่อน
-  "#8DD1E1", // ฟ้าอ่อน
-  "#D084D0", // ม่วงชมพู
-  "#87D068", // เขียวสด
-  "#FFB347", // ส้มอ่อน
-  "#FF6B6B", // แดงชมพู
-  "#4ECDC4", // เขียวเทอร์ควอยซ์
-];
+// กำหนดสีตามคณะ
+const FACULTY_COLORS = {
+  คณะวิทยาศาสตร์และเทคโนโลยี: "#FFEB3B", // เหลือง
+  คณะเทคโนโลยีสารสนเทศ: "#2196F3", // น้ำเงิน
+  คณะครุศาสตร์: "#87CEEB", // ฟ้า
+  คณะวิทยาการจัดการ: "#FF9800", // ส้ม
+  คณะเทคโนโลยีการเกษตร: "#4CAF50", // เขียว
+  คณะมนุษยศาสตร์และสังคมศาสตร์: "#9C27B0", // ม่วง
+  คณะรัฐศาสตร์และรัฐประศาสนศาสตร์: "#00BCD4", // เขียวอมฟ้า
+  คณะนิติศาสตร์: "#FFA726", // เหลืองส้ม
+  คณะวิศวกรรมศาสตร์: "#F44336", // แดง
+};
 
-// Custom Tooltip component
-const CustomTooltip = ({ active, payload, label }) => {
+// ฟังก์ชันหาสีจากชื่อคณะ
+const getFacultyColor = (facultyName) => {
+  return FACULTY_COLORS[facultyName] || "#8884d8";
+};
+
+const CustomTooltip = ({ active, payload }) => {
   if (active && payload && payload.length) {
     const data = payload[0].payload;
+    const bgColor = getFacultyColor(data.name);
+
     return (
-      <div className="bg-white p-3 border border-gray-300 rounded shadow-lg">
-        <p className="font-semibold text-gray-800">{data.name}</p>
-        <p className="text-blue-600">
-          เฉลี่ย: {Number(Math.round(data.value)).toLocaleString()} บาท / เดือน
+      <div
+        className="p-4 border-2 border-white rounded-lg shadow-2xl"
+        style={{
+          backgroundColor: bgColor,
+          opacity: 0.95,
+        }}
+      >
+        <p className="font-bold text-gray-800 text-lg mb-2">{data.name}</p>
+        <p className="text-gray-700 font-semibold">
+          เงินเดือนเฉลี่ย: {Number(Math.round(data.value)).toLocaleString()}{" "}
+          บาท/เดือน
         </p>
-        <p className="text-green-600">
-          คิดเป็น (%):{" "}
-          {((data.value / payload[0].payload.total) * 100).toFixed(1)}%
+        <p className="text-gray-700 font-semibold">
+          คิดเป็น: {((data.value / data.total) * 100).toFixed(1)}%
         </p>
       </div>
     );
@@ -45,7 +53,6 @@ const renderCustomizedLabel = ({
   innerRadius,
   outerRadius,
   percent,
-  payload,
 }) => {
   const RADIAN = Math.PI / 180;
   const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
@@ -53,60 +60,53 @@ const renderCustomizedLabel = ({
   const y = cy + radius * Math.sin(-midAngle * RADIAN);
 
   return (
-    <>
-      {/* เปอร์เซ็นต์ในวงกลม */}
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize={12}
-        fontWeight="bold"
-      >
-        {`${(percent * 100).toFixed(1)} %`}
-      </text>
-
-      {/* ชื่อคณะ ข้างวงกลม */}
-      <text
-        x={cx + (outerRadius + 20) * Math.cos(-midAngle * RADIAN)}
-        y={cy + (outerRadius + 20) * Math.sin(-midAngle * RADIAN)}
-        fill="#fff"
-        textAnchor={x > cx ? "start" : "end"}
-        dominantBaseline="central"
-        fontSize={15}
-      >
-        {payload.name}
-      </text>
-    </>
+    <text
+      x={x}
+      y={y}
+      fill="white"
+      textAnchor="middle"
+      dominantBaseline="central"
+      fontSize={14}
+      fontWeight="bold"
+      style={{ textShadow: "1px 1px 2px rgba(0,0,0,0.8)" }}
+    >
+      {`${(percent * 100).toFixed(1)}%`}
+    </text>
   );
 };
 
-const PieChartComponent = ({ data, openToolTip }) => {
-  // คำนวณ total สำหรับเปอร์เซ็นต์ใน tooltip
+const PieChartComponent = ({ data, openToolTip = true }) => {
+  // คำนวณ total สำหรับเปอร์เซ็นต์
+  const total = data.reduce((sum, d) => sum + d.value, 0);
   const dataWithTotal = data.map((item) => ({
     ...item,
-    total: data.reduce((sum, d) => sum + d.value, 0),
+    total: total,
   }));
 
   return (
-    <div style={{ width: "100%", height: 500 }}>
+    <div style={{ width: 550, height: 500 }}>
       <ResponsiveContainer width="100%" height="100%">
-        <PieChart width={800} height={800}>
+        <PieChart>
           <Pie
             data={dataWithTotal}
             cx="50%"
             cy="50%"
             labelLine={false}
             label={renderCustomizedLabel}
-            outerRadius={80}
+            outerRadius={180}
+            innerRadius={0}
             fill="#8884d8"
             dataKey="value"
+            activeShape={{
+              outerRadius: 200,
+            }}
           >
             {dataWithTotal.map((entry, index) => (
               <Cell
                 key={`cell-${index}`}
-                fill={COLORS[index % COLORS.length]}
+                fill={getFacultyColor(entry.name)}
+                stroke="#fff"
+                strokeWidth={2}
               />
             ))}
           </Pie>

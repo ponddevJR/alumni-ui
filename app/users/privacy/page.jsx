@@ -11,7 +11,7 @@ import Switch from "react-switch";
 const Privacy = () => {
   const { user } = useGetSession();
 
-  const [seeProfile,setSeeProfile] = useState(false);
+  const [seeProfile, setSeeProfile] = useState(false);
   const [seeEmail, setSeeEmail] = useState(false);
   const [seePhone, setSeePhone] = useState(false);
   const [seeFacebook, setSeeFacebook] = useState(false);
@@ -98,22 +98,31 @@ const Privacy = () => {
     );
 
   return (
-    <div className="w-full pl-3 flex flex-col items-start gap-7">
-      <div className="lg:w-1/2 w-full flex flex-col gap-2 p-5 rounded-lg border border-gray-300 shadow-md">
+    <div className="w-full p-5 flex flex-col items-center gap-5 bg-gradient-to-r from-sky-50 to-gray-50">
+      <div className="lg:w-1/2 bg-white w-full flex flex-col gap-2 p-5 rounded-lg border border-gray-300 shadow-md">
         <span className="flex items-center gap-3">
           <ShieldUser size={35} color="blue" />
           <h1 className="text-xl font-bold">จัดการความเป็นส่วนตัว</h1>
         </span>
         <p className="text-gray-600">ควบคุมข้อมูลที่จะแสดงในสาธารณะของคุณ</p>
       </div>
+      <div className=" lg:w-1/2 w-full flex flex-col rounded-lg p-5 border border-blue-300 bg-blue-100 shadow-md">
+        <div className="flex items-center gap-2">
+          <Shield size={25} color="blue" />
+          <p>หมายเหตุ</p>
+        </div>
+        <li className="mt-2 ml-3 text-sm text-red-500">
+          เมื่อเกิดการเปลี่ยนแปลงกรุณากดปุ่ม "บันทึกการตั้งค่า" เพื่อบันทึก
+        </li>
+      </div>
 
-      <div className="lg:w-1/2 w-full flex flex-col rounded-lg p-5 border border-gray-300 shadow-md">
+      <div className="bg-white lg:w-1/2 w-full flex flex-col rounded-lg p-5 border border-gray-300 shadow-md">
         <h2 className="font-bold">ข้อมูลส่วนบุคคล</h2>
         <p className="text-sm text-gray-600 mt-2">
           เลือกข้อมูลที่ต้องการแสดงในสาธารณะ
         </p>
         {/* profile */}
-        <span className="mt-6 pb-5 border-b border-gray-300 flex items-center justify-between w-full">
+        <span className="mt-3.5 pb-5 border-b border-gray-300 flex items-center justify-between w-full">
           <div className="flex flex-col gap-0.5">
             <label htmlFor="">รูปโปรไฟล์</label>
             <p className="text-sm text-gray-500">
@@ -278,7 +287,7 @@ const Privacy = () => {
         )}
       </div>
 
-      <div className="lg:w-1/2 w-full flex flex-col rounded-lg p-5 border border-gray-300 shadow-md">
+      <div className="lg:w-1/2 bg-white w-full flex flex-col rounded-lg p-5 border border-gray-300 shadow-md">
         <h2 className="font-bold">อนุญาตส่งข้อความ</h2>
         <p className="text-sm text-gray-600 mt-2">
           กำหนดให้ผู้ใช้งานคนอื่นสามารถส่งขอความหาคุณได้ทางอีเมล์
@@ -310,12 +319,11 @@ const Privacy = () => {
             />
           </div>
         </span>
-        {/* send form alumni */}
         <span className="mt-6 pb-4 border-b border-gray-300 flex items-center justify-between w-full">
           <div className="flex flex-col gap-0.5">
             <label htmlFor="">อนุญาตอาจารย์ส่งข้อความ</label>
             <p className="text-sm text-gray-500">
-              อนุญาตให้อาจารย์เก่าสามารถส่งข้อความหาคุณได้ทางอีเมล์
+              อนุญาตให้อาจารย์สามารถส่งข้อความหาคุณได้ทางอีเมล์
             </p>
           </div>
           <div className="flex items-center gap-3">
@@ -328,7 +336,9 @@ const Privacy = () => {
             <Switch
               onColor="#32CD32"
               checked={allowedProfessorSendEmail}
-              onChange={() => setAllowedProfessorText(!allowedProfessorSendEmail)}
+              onChange={() =>
+                setAllowedProfessorText(!allowedProfessorSendEmail)
+              }
               offColor="#d1d5db"
               uncheckedIcon={false}
               checkedIcon={false}
@@ -339,15 +349,6 @@ const Privacy = () => {
         </span>
       </div>
 
-      <div className="lg:w-1/2 w-full flex flex-col rounded-lg p-5 border border-blue-300 bg-blue-50 shadow-md">
-        <div className="flex items-center gap-2">
-          <Shield size={25} color="blue" />
-          <p>หมายเหตุ</p>
-        </div>
-        <li className="mt-2 ml-3 text-sm text-red-500">
-          เมื่อเกิดการเปลี่ยนแปลงกรุณากดปุ่ม "บันทึกการตั้งค่า" เพื่อบันทึก
-        </li>
-      </div>
       <div className="w-full lg:w-1/2 flex justify-end my-3">
         <button
           onClick={save}

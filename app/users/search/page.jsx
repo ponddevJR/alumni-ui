@@ -37,13 +37,12 @@ import { useAppContext } from "@/context/app.context";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { SelectYearEnd, SelectYearStart } from "@/components/select-year-start";
-import {v4 as uuid} from "uuid";
+import { v4 as uuid } from "uuid";
 
 const SearchPage = () => {
   const { user } = useGetSession();
   const [showSendEmail, setSendEmail] = useState(false);
   const [search, setSearch] = useState("");
-  const [type, setType] = useState(1);
   const [faculty, setFaculty] = useState("");
   const [department, setDepartment] = useState("");
   const [page, setPage] = useState(1);
@@ -55,13 +54,12 @@ const SearchPage = () => {
 
   const [dataList, setDataList] = useState([]);
   const [sort, setSort] = useState(JSON.stringify({ year_start: "desc" }));
-  const [take, setTake] = useState(25);
+  const [take, setTake] = useState(10);
   const [selectYearStart, setSelectYearStart] = useState("");
   const [selectYearEnd, setSelectYearEnd] = useState("");
 
   const fetchData = async (
     search = "",
-    type = 0,
     fac = "",
     dep = "",
     page = 1,
@@ -78,7 +76,6 @@ const SearchPage = () => {
           page,
           search,
           fac,
-          type,
           dep,
           sort,
           take,
@@ -89,6 +86,7 @@ const SearchPage = () => {
 
       if (res.status === 200) {
         setDataList(res?.data?.data);
+        console.log("🚀 ~ fetchData ~ res?.data?.data:", res?.data?.data);
         setTotalPage(res?.data?.totalPage);
         setResultLength(res?.data?.all);
       }
@@ -105,7 +103,6 @@ const SearchPage = () => {
   useEffect(() => {
     debounceSearch(
       search,
-      type,
       faculty,
       department,
       page,
@@ -116,7 +113,6 @@ const SearchPage = () => {
     );
   }, [
     search,
-    type,
     faculty,
     department,
     page,
@@ -130,11 +126,10 @@ const SearchPage = () => {
     setSearch("");
     setFaculty("");
     setDepartment("");
-    setType(1);
     setPage(1);
     setSelectYearEnd("");
     setSelectYearStart("");
-    setTake(25);
+    setTake(10);
   };
 
   const [sendToData, setSendToData] = useState();
@@ -148,16 +143,16 @@ const SearchPage = () => {
   return (
     <>
       <div
-        className={`w-full flex flex-col p-2 ${
+        className={`w-full flex flex-col p-5 ${
           showAstTableFormat
             ? " bg-white"
             : "bg-gradient-to-r from-blue-50 via-yellow-50 to-green-50"
         }`}
       >
         <span className="flex items-end gap-2 pb-2 w-full border-b border-gray-300">
-          <h1 className="text-2xl font-bold">ค้นหาศิษย์เก่าและอาจารย์</h1>
+          <h1 className="text-2xl font-bold">ค้นหาศิษย์เก่า</h1>
           <p className="text-gray-600 text-[0.9rem]">
-            ค้นหาและติดต่อกับศิษย์เก่าหรืออาจารย์
+            ค้นหาและติดต่อกับศิษย์เก่า
           </p>
         </span>
 
@@ -230,95 +225,94 @@ const SearchPage = () => {
 
               <span className="flex gap-1.5 lg:gap-2  lg:flex-row lg:items-center">
                 <select
-                  value={type}
-                  onChange={(e) => setType(e.target.value)}
                   name=""
                   id=""
                   className="outline-0 text-sm w-full lg:w-1/4 p-2 rounded-md bg-gray-50 shadow-sm border border-gray-100"
                 >
                   <option value={1}>ศิษย์เก่า</option>
-                  <option value={2}>อาจารย์</option>
                 </select>
-                {type < 2 && (
-                  <>
-                    {" "}
-                    <SelectYearStart
-                      setSelectYearStart={setSelectYearStart}
-                      selectYearStart={selectYearStart}
-                      setPage={setPage}
-                    />
-                    <SelectYearEnd
-                      setSelectYearEnd={setSelectYearEnd}
-                      selectYearEnd={selectYearEnd}
-                      setPage={setPage}
-                    />
-                    <div title="แสดงจำนวนแถว" className="relative inline-block">
-                      <select
-                        onChange={(e) => {
-                          setTake(e.target.value);
-                          setPage(1);
-                        }}
-                        value={take}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+
+                <>
+                  {" "}
+                  <SelectYearStart
+                    setSelectYearStart={setSelectYearStart}
+                    selectYearStart={selectYearStart}
+                    setPage={setPage}
+                  />
+                  <SelectYearEnd
+                    setSelectYearEnd={setSelectYearEnd}
+                    selectYearEnd={selectYearEnd}
+                    setPage={setPage}
+                  />
+                  <div title="แสดงจำนวนแถว" className="relative inline-block">
+                    <select
+                      onChange={(e) => {
+                        setTake(e.target.value);
+                        setPage(1);
+                      }}
+                      value={take}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    >
+                      <option value={10} className="text-sm">
+                        10
+                      </option>
+                      <option value={25} className="text-sm">
+                        25
+                      </option>
+                      <option value={50} className="text-sm">
+                        50
+                      </option>
+                      <option value={100} className="text-sm">
+                        100
+                      </option>
+                    </select>
+                    <label
+                      htmlFor="select-row"
+                      className="p-2 px-3.5 rounded-lg border border-gray-300 shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <List size={17} />
+                      <p className="text-sm hidden lg:inline-flex">
+                        แสดง {take} แถว
+                      </p>
+                    </label>
+                  </div>
+                  <div title="เรียงตาม" className="relative inline-block">
+                    <select
+                      onChange={(e) => {
+                        setSort(e.target.value);
+                        setPage(1);
+                      }}
+                      value={sort}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                    >
+                      <option
+                        value={JSON.stringify({ year_start: "desc" })}
+                        className="text-sm"
                       >
-                        <option value={25} className="text-sm">
-                          25
-                        </option>
-                        <option value={50} className="text-sm">
-                          50
-                        </option>
-                        <option value={100} className="text-sm">
-                          100
-                        </option>
-                      </select>
-                      <label
-                        htmlFor="select-row"
-                        className="p-2 px-3.5 rounded-lg border border-gray-300 shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                        ปีที่เข้ารับการศึกษา (มากไปน้อย)
+                      </option>
+                      <option
+                        value={JSON.stringify({ year_start: "asc" })}
+                        className="text-sm"
                       >
-                        <List size={17} />
-                        <p className="text-sm hidden lg:inline-flex">
-                          แสดง {take} แถว
-                        </p>
-                      </label>
-                    </div>
-                    <div title="เรียงตาม" className="relative inline-block">
-                      <select
-                        onChange={(e) => {
-                          setSort(e.target.value);
-                          setPage(1);
-                        }}
-                        value={sort}
-                        className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                        ปีที่เข้ารับการศึกษา (น้อยไปมาก)
+                      </option>
+                      <option
+                        value={JSON.stringify({ updatedAt: "desc" })}
+                        className="text-sm"
                       >
-                        <option
-                          value={JSON.stringify({ year_start: "desc" })}
-                          className="text-sm"
-                        >
-                          ปีที่เข้ารับการศึกษา (มากไปน้อย)
-                        </option>
-                        <option
-                          value={JSON.stringify({ year_start: "asc" })}
-                          className="text-sm"
-                        >
-                          ปีที่เข้ารับการศึกษา (น้อยไปมาก)
-                        </option>
-                        <option
-                          value={JSON.stringify({ updatedAt: "desc" })}
-                          className="text-sm"
-                        >
-                          อัปเดตล่าสุด
-                        </option>
-                      </select>
-                      <label
-                        htmlFor="select-row"
-                        className="p-2 px-3.5 rounded-lg border border-gray-300 shadow-md flex items-center justify-center gap-2 cursor-pointer"
-                      >
-                        <ChevronsUpDown size={17} />
-                        <p className="text-sm hidden lg:inline-flex">เรียง</p>
-                      </label>
-                    </div>
-                  </>
-                )}
+                        อัปเดตล่าสุด
+                      </option>
+                    </select>
+                    <label
+                      htmlFor="select-row"
+                      className="p-2 px-3.5 rounded-lg border border-gray-300 shadow-md flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <ChevronsUpDown size={17} />
+                      <p className="text-sm hidden lg:inline-flex">เรียง</p>
+                    </label>
+                  </div>
+                </>
               </span>
             </div>
 
@@ -352,8 +346,7 @@ const SearchPage = () => {
 
         <span className="w-full flex items-center justify-between">
           <label htmlFor="" className="font-bold text-sm mt-7">
-            ผลการค้นหา{type < 2 ? "ข้อมูลศิษย์เก่า" : "ข้อมูลอาจารย์"} (
-            {loading ? "กำลังโหลด..." : resultLenth + " คน" || "0"})
+            ผลการค้นหา ({loading ? "กำลังโหลด..." : resultLenth + " คน" || "0"})
           </label>
           {totalPage > 1 && (
             <div className="items-center flex gap-5 mt-5 justify-center text-sm">
@@ -402,7 +395,7 @@ const SearchPage = () => {
                       "คณะ",
                       "สาขา",
 
-                      ...(type < 2 ? ["ปีการศึกษา (พ.ศ.)"] : ["ตำแหน่ง"]),
+                      "ปีการศึกษา (พ.ศ.)",
 
                       "แอ็คชัน",
                     ].map((h) => (
@@ -413,16 +406,12 @@ const SearchPage = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dataList.map((d,index) => (
+                  {dataList.map((d, index) => (
                     <tr
                       onClick={(e) => {
                         e.stopPropagation();
                         setPrevPath("/users/search");
-                        router.push(
-                          `/users/search/${
-                            type < 2 ? d?.alumni_id : d?.professor_id
-                          }/${type}`
-                        );
+                        router.push(`/users/search/${d?.alumni_id}/1`);
                       }}
                       key={uuid()}
                       className="text-sm hover:bg-sky-100 transition-all duration-200 cursor-pointer border-b border-gray-200"
@@ -431,7 +420,7 @@ const SearchPage = () => {
                         {index + (page - 1) * take + 1}
                       </td>
                       <td className="p-2.5 py-3 text-start">
-                        {type < 2 ? d?.prefix : d?.academic_rank || "อ."}
+                        {d?.prefix}
                         {d?.fname} {d?.lname}
                       </td>
                       <td className="p-2.5 py-3 text-start">
@@ -441,14 +430,11 @@ const SearchPage = () => {
                         {departmentText(d?.departmentId)}
                       </td>
                       <td className="p-2.5 py-3 text-start">
-                        {type < 2
-                          ? `${d?.year_start} - ${d?.year_end}`
-                          : d?.univercity_position}
+                        {`${d?.year_start} - ${d?.year_end}`}
                       </td>
                       <td className="">
                         <div className="flex items-center justify-center">
-                          {user?.id !==
-                          (type < 2 ? d?.alumni_id : d?.professor_id) ? (
+                          {user?.id !== d?.alumni_id ? (
                             <button
                               title="ส่งข้อความ"
                               onClick={(e) => {
@@ -561,7 +547,6 @@ const SearchPage = () => {
       </div>
 
       <SendEmail
-        type={type}
         sendToData={sendToData}
         show={showSendEmail}
         onclose={() => {

@@ -99,7 +99,7 @@ const Setting = () => {
   }
 
   return (
-    <div className="w-full flex h-full items-center justify-center bg-gradient-to-r from-neutral-100 to-stone-100">
+    <div className="w-full flex h-full items-center justify-center bg-gradient-to-r from-neutral-100 to-stone-100 p-3">
       <div className="w-full lg:w-1/2 p-7 ml-3 border mt-1 flex flex-col bg-white border-gray-300 rounded-lg shadow-lg shadow-gray-400">
         <span className="flex items-center gap-4">
           <Lock size={25} color="blue" />

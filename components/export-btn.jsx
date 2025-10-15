@@ -27,7 +27,7 @@ const ExportBtn = ({ data, exportname }) => {
     <button
       onClick={handleExport}
       disabled={!data}
-      className="p-2 text-white bg-blue-600 px-3.5 rounded-lg border border-gray-300 shadow-md flex items-center gap-2"
+      className="p-2 text-white bg-blue-600 px-3.5 rounded-lg border border-gray-300 shadow-md flex justify-center items-center gap-2"
     >
       <Download size={17} color="white" />
       <p className="text-sm hidden lg:inline-flex">Export</p>

@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { DashboardContext } from "../users/dashboard/dashboard-context";
 import { AppProvider } from "@/context/app.context";
+import Footer from "@/layouts/footer";
 
 const Layout = ({ children }) => {
   const { user, checking } = useGetSession();
@@ -34,13 +35,14 @@ const Layout = ({ children }) => {
           <div className="flex lg:gap-2 lg:items-center lg:flex-row flex-col">
             <h1 className="font-bold text-sm text-blue-600">RMU ALUMNI</h1>
             <p className="text-sm">
-              : ระบบศิษย์เก่า มหาวิทยาลัยราชภัฏมหาสารคาม (Admin)
+              : ระบบสารสนเทศเครือข่ายศิษย์เก่า มหาวิทยาลัยราชภัฏมหาสารคาม (Admin)
             </p>
           </div>
         </header>
         <AppProvider>
           <DashboardContext>{children}</DashboardContext>
         </AppProvider>
+        <Footer/>
       </div>
     </div>
   );

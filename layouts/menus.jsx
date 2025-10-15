@@ -7,6 +7,7 @@ import {
   BriefcaseBusiness,
   ChartPie,
   CircleUser,
+  Group,
   HelpCircle,
   LogOut,
   MenuIcon,
@@ -15,8 +16,10 @@ import {
   Search,
   ShieldUser,
   User,
+  UserCog2Icon,
   UserPen,
   Users,
+  Users2,
   X,
 } from "lucide-react";
 import Image from "next/image";
@@ -46,7 +49,7 @@ const Menu = () => {
       title: "ความเป็นส่วนตัว",
       icon: <ShieldUser size={20} />,
       url: "/users/privacy",
-      allowed: [1, 2, 3, 4],
+      allowed: [1, 2],
     },
     {
       title: "ประวัติการทำงาน",
@@ -64,25 +67,31 @@ const Menu = () => {
       title: "ข่าวสาร/บริจาค",
       icon: <Newspaper size={20} />,
       url: "/users/news",
-      allowed: [1, 2, 3, 4],
+      allowed: [1, 2],
+    },
+    {
+      title: "จัดการศิษย์เก่า",
+      icon: <User size={20} />,
+      url: "/alumni-president/alumni-manage",
+      allowed: [5],
+    },
+    {
+      title: "จัดการบุคคลการ",
+      icon: <Users size={20} />,
+      url: "/alumni-president/personels-manage",
+      allowed: [5],
+    },
+    {
+      title: "ส่งข้อความ",
+      icon: <MessageCircle size={20} />,
+      url: user?.roleId === 4 ? "/users/message" : "/alumni-president/message",
+      allowed: [4, 5],
     },
     {
       title: "บัญชี",
       icon: <CircleUser size={20} />,
       url: "/users/account",
       allowed: [1, 2, 3, 4],
-    },
-    {
-      title: "รายชื่อศิษย์เก่า",
-      icon: <User size={20} />,
-      url: "/alumni-president/alumni-manage",
-      allowed: [5],
-    },
-    {
-      title: "ส่งข้อความ",
-      icon: <MessageCircle size={20} />,
-      url: "/alumni-president/message",
-      allowed: [5],
     },
     {
       title: "ข่าวสาร/การบริจาค",
@@ -131,12 +140,12 @@ const Menu = () => {
   return (
     <>
       <div
-        className={`p-3 lg:flex ${
+        className={`p-3 lg:flex bg-white ${
           showResponsive ? "flex w-[80%] absolute top-0" : "hidden"
-        } w-1/5 h-full flex-col border-r justify-between border-gray-200 bg-gray-800 shadow-md z-[100]`}
+        } w-1/5 h-full flex-col border-r-2 justify-between border-gray-200 shadow-md z-[100]`}
       >
         <div className="w-full flex flex-col">
-          <div className="flex items-center w-full gap-4 pb-3 p-1 border-b border-gray-600">
+          <div className="flex items-center w-full gap-4 pb-3 p-1 border-b border-gray-200">
             {user?.roleId < 5 && (
               <Link
                 href="/users/profile"
@@ -160,7 +169,7 @@ const Menu = () => {
             <span className="flex flex-col ">
               <p className="text-blue-400 text-sm">ยินดีต้อนรับ!</p>
               {user?.roleId < 5 && (
-                <p className="text-white">คุณ{user?.fname}</p>
+                <p className="text-gray-800">คุณ{user?.fname}</p>
               )}
             </span>
             {showResponsive && (
@@ -168,11 +177,11 @@ const Menu = () => {
                 onClick={() => setShowResponsive(false)}
                 className="absolute top-3 right-5"
               >
-                <X size={28} color="white" />
+                <X size={28} />
               </button>
             )}
           </div>
-          <label htmlFor="" className="my-4 text-sm text-gray-300">
+          <label htmlFor="" className="my-4 text-sm text-gray-500">
             เมนู
           </label>
           {menus
@@ -181,15 +190,20 @@ const Menu = () => {
               <Link
                 onClick={() => setShowResponsive(false)}
                 key={index}
-                className={`flex items-center gap-3  text-gray-100 transition-all duration-300 ${
-                  path.split("/")[2] === m.url.split("/")[2] && "bg-blue-500"
-                } hover:bg-blue-600 mt-0.5 rounded-lg w-full p-3.5`}
+                className={`flex items-center gap-3 transition-all  duration-300 ${
+                  path.split("/")[2] === m.url.split("/")[2]
+                    ? "bg-gradient-to-br from-blue-500 via-sky-500 shadow-md to-blue-300 text-blue-50"
+                    : "hover:bg-blue-100 hover:shadow-xs text-gray-800"
+                }  mt-0.5 rounded-lg w-full p-3.5`}
                 href={m.url}
               >
                 {m.icon}
                 {m.title}
               </Link>
             ))}
+          <label htmlFor="" className="my-4 text-sm text-gray-500">
+            ระบบ
+          </label>
           <button
             onClick={logout}
             className="flex items-center gap-3  text-gray-100 transition-all duration-300 bg-red-500 mt-1 rounded-lg w-full p-3.5"
@@ -200,10 +214,6 @@ const Menu = () => {
         </div>
 
         {/* developby */}
-        <div className="w-full items-start flex flex-col mb-2">
-          <p className="text-gray-100 text-xs">พัฒนาโดย</p>
-          <p className="text-gray-100 text-xs">นายปฐมพร วงสุวรรณ 096-5850195</p>
-        </div>
       </div>
 
       {/* responsive button */}

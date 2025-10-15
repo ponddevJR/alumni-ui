@@ -1,5 +1,7 @@
 import { Sarabun } from "next/font/google";
 import "./globals.css";
+import ProgressBar from "@/components/progressbar";
+
 
 const sarabun = Sarabun({
   weight: ["400", "800"],
@@ -8,7 +10,7 @@ const sarabun = Sarabun({
 
 export const metadata = {
   title: "RMU ALUMNI",
-  description: "ระบบศิษย์เก่ามหาวิทยาลัยราชภัฏมหาสารคาม ",
+  description: "ระบบสารสนเทศเครือข่ายศิษย์เก่ามหาวิทยาลัยราชภัฏมหาสารคาม ",
   icons: {
     icon: "/logo_rmu.png",
   },
@@ -20,7 +22,10 @@ export default function RootLayout({ children }) {
       <head>
         <link rel="icon" href="/logo_rmu.png" />
       </head>
-      <body className={`${sarabun.className} antialiased`}>{children}</body>
+      <body className={`${sarabun.className} antialiased`}>
+        <ProgressBar />
+        {children}
+      </body>
     </html>
   );
 }

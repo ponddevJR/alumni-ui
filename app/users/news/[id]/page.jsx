@@ -83,7 +83,7 @@ const Page = () => {
   }
 
   return (
-    <div className="w-full flex flex-col pb-3 bg-gray-50">
+    <div className="w-full flex flex-col p-5 pb-3 bg-gray-50">
       <div className="w-full md:h-[380px] h-[35%] relative overflow-hidden rounded-tl-lg rounded-tr-lg">
         <Link
           href="/users/news"

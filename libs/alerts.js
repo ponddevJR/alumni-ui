@@ -1,3 +1,4 @@
+import { warning } from "framer-motion";
 import Swal from "sweetalert2";
 
 export const alerts = {
@@ -6,6 +7,9 @@ export const alerts = {
   },
   success: (text = "บันทึกข้อมูลแล้ว") => {
     return Swal.fire("สำเร็จ", text, "success");
+  },
+  warning: (text = "") => {
+    return Swal.fire("แจ้งเตือน", text, "warning");
   },
   confirmDialog: (
     title,

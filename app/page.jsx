@@ -64,6 +64,9 @@ const Page = () => {
         setPassKey(res?.data?.key);
         setPassKeyID(res?.data?.alumni_id);
       }
+      if (res.data?.err) {
+        return alerts.err(res.data?.err);
+      }
 
       if (res?.data?.ok) {
         alerts.success("เข้าสู่ระบบแล้ว!");
@@ -78,7 +81,6 @@ const Page = () => {
     } catch (error) {
       console.error(error);
       const status = error?.response?.status || error?.status;
-      console.log("🚀 ~ submitForm ~ status:", status)
 
       if (status === 429) {
         return alerts.err(
@@ -140,14 +142,14 @@ const Page = () => {
 
         <form
           onSubmit={!firstLogin ? handleSubmit(submitForm) : authenticate}
-          className="z-50 lg:w-1/3 w-full bg-white rounded-md shadow-md shadow-gray-600 border border-gray-400 p-8 flex flex-col items-center justify-center"
+          className="z-50 lg:w-1/3 w-full bg-white rounded-md shadow-md shadow-gray-600 border border-gray-400 p-5 lg:p-8 flex flex-col items-center justify-center"
         >
           {/* logo */}
           <Image alt="logo" priority src={logo} className="w-1/5 h-auto" />
 
           <h1 className="font-bold text-3xl mt-2 text-blue-700">RMU ALUMNI</h1>
           <p className="mt-1 text-sm w-full text-center">
-            ระบบศิษย์เก่า มหาวิทยาลัยราชภัฏมหาสารคาม
+            ระบบสารสนเทศเครือข่ายศิษย์เก่า มหาวิทยาลัยราชภัฏมหาสารคาม
           </p>
           {!firstLogin ? (
             <>
@@ -268,7 +270,7 @@ const Page = () => {
           )}
 
           {/* more */}
-          <div className="w-full flex lg:flex-row flex-col items-center gap-1 justify-between mt-5">
+          <div className="w-full flex items-center gap-1 justify-between mt-5">
             <button
               type="button"
               onClick={() => setShowWonderDetail(true)}
@@ -304,6 +306,14 @@ const Page = () => {
               </>
             )}
           </button>
+          <div className="mt-5 w-full  flex flex-col items-center gap-0.5 text-center text-xs">
+            ฉันได้อ่าน เข้าใจและยอมรับ{" "}
+            <span className="flex flex-col lg:flex-row w-full text-center justify-center gap-0.5">
+              {" "}
+              <p className="text-blue-600">ข้อตกลงการใช้บริการ</p>และ
+              <p className="text-blue-600">นโยบายความเป็นส่วนตัว</p>
+            </span>
+          </div>
         </form>
       </div>
 

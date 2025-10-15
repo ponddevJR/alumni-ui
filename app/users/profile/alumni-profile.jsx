@@ -57,14 +57,15 @@ const AlumniProfile = () => {
       });
       if (res?.status === 200) {
         setUserData(res?.data?.alumni);
-        console.log("🚀 ~ fetchUserData ~ res?.data?.alumni:", res?.data?.alumni)
-
+        console.log(
+          "🚀 ~ fetchUserData ~ res?.data?.alumni:",
+          res?.data?.alumni
+        );
         setProfileImage(
           res?.data?.alumni?.profile
             ? apiConfig.imgAPI + res?.data?.alumni?.profile
             : NO_PROFILE_IMG
         );
-        console.log(apiConfig.imgAPI + res?.data?.alumni?.profile);
       }
     } catch (error) {
       console.error(error);
@@ -152,7 +153,7 @@ const AlumniProfile = () => {
     );
 
   return (
-    <div className="w-full flex flex-col px-2 mb-5">
+    <div className="w-full flex flex-col p-5 mb-5">
       <div
         className={`relative w-full flex flex-col gap-7 lg:flex-row lg:items-start items-center p-5 px-8 rounded-lg bg-gradient-to-l ${
           roleId > 1
@@ -380,7 +381,9 @@ const AlumniProfile = () => {
             >
               <Mail size={18} color="red" />
               <p className="text-[0.9rem]">
-                {userData?.email1 || userData?.email2 || "-"}
+                {userData?.email1
+                  ? userData?.email1
+                  : userData?.email2 || " -"}
               </p>
             </label>
             <label
@@ -415,24 +418,9 @@ const AlumniProfile = () => {
 
       <div className="w-full mt-5 border border-gray-300 p-6 rounded-md shadow-md">
         {showContactType > 0 ? (
-          <LiveContact
-            address={userData?.address}
-            amphure={userData?.amphure}
-            province={userData?.province}
-            tambon={userData?.tambon}
-            zipcode={userData?.zipcode}
-            reload={fetchUserData}
-          />
+          <LiveContact />
         ) : (
-          <Contact
-            roleId={user?.roleId}
-            e1={userData?.email1}
-            e2={userData?.email2}
-            f={userData?.facebook}
-            p1={userData?.phone1}
-            p2={userData?.phone2}
-            reload={fetchUserData}
-          />
+          <Contact reload={fetchUserData} />
         )}
       </div>
     </div>

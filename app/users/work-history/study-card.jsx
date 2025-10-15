@@ -1,6 +1,34 @@
+import { apiConfig } from "@/config/api.config";
+import useGetSession from "@/hook/useGetSeesion";
+import { alerts } from "@/libs/alerts";
+import axios from "axios";
 import { Book, Calendar, Edit, GraduationCap, Map, Trash } from "lucide-react";
 
-const StudyCard = ({ e, handleEdit, deleteWork }) => {
+const StudyCard = ({ e, handleEdit, fetchWorkExprerience }) => {
+  const { user } = useGetSession();
+
+  const deleteWork = async (id) => {
+    const { isConfirmed } = await alerts.confirmDialog(
+      "ลบประวัติ",
+      "ต้องการลบประวัตินี้หรือไม่?"
+    );
+    if (!isConfirmed) return;
+
+    try {
+      const res = await axios.delete(
+        apiConfig.rmuAPI + "/alumni/work-delete/" + id,
+        { withCredentials: true }
+      );
+      if (res?.status === 200) {
+        alerts.success("ลบข้อมูลแล้ว");
+        fetchWorkExprerience();
+      }
+    } catch (error) {
+      console.error(error);
+      alerts.err();
+    }
+  };
+
   return (
     <div className="p-5 rounded-lg bg-white shadow-md border border-gray-200 mt-5">
       <span className="w-full flex items-center justify-between">
@@ -13,20 +41,24 @@ const StudyCard = ({ e, handleEdit, deleteWork }) => {
           </label>
         )}
         <div className="flex items-center gap-2">
-          <button
-            onClick={() => handleEdit(e)}
-            title="แก้ไข"
-            className="hover:bg-yellow-300 p-1.5 rounded-md shadow-md border border-gray-400"
-          >
-            <Edit size={18} />
-          </button>
-          <button
-            onClick={() => deleteWork(e?.id)}
-            title="ลบ"
-            className="hover:bg-rose-400 p-1.5 rounded-md shadow-md border border-gray-400"
-          >
-            <Trash size={18} />
-          </button>
+          {user?.id === e?.alumniId && (
+            <button
+              onClick={() => handleEdit(e)}
+              title="แก้ไข"
+              className="hover:bg-yellow-300 p-1.5 rounded-md shadow-md border border-gray-400"
+            >
+              <Edit size={18} />
+            </button>
+          )}
+          {user?.id === e?.alumniId && (
+            <button
+              onClick={() => deleteWork(e?.id)}
+              title="ลบ"
+              className="hover:bg-rose-400 p-1.5 rounded-md shadow-md border border-gray-400"
+            >
+              <Trash size={18} />
+            </button>
+          )}
         </div>
       </span>
       <span className="mt-3 flex items-center gap-2">
@@ -58,10 +90,7 @@ const StudyCard = ({ e, handleEdit, deleteWork }) => {
             {" "}
             <div className="mt-1 flex ml-2.5 flex-col gap-0.5">
               {e?.edu_performance?.split(",").map((p, index) => (
-                <li
-                  className="text-sm text-gray-600"
-                  key={index}
-                >
+                <li className="text-sm text-gray-600" key={index}>
                   {p}
                 </li>
               ))}

@@ -1,0 +1,14 @@
+/* สำหรับธีมฟ้าขาว */
+#nprogress .bar {
+  background: #42a5f5 !important;
+  height: 3px !important;
+}
+
+#nprogress .peg {
+  box-shadow: 0 0 10px #42a5f5, 0 0 5px #42a5f5 !important;
+}
+
+#nprogress .spinner-icon {
+  border-top-color: #42a5f5 !important;
+  border-left-color: #42a5f5 !important;
+}

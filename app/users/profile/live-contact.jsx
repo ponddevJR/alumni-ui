@@ -1,3 +1,4 @@
+import Loading from "@/components/loading";
 import { apiConfig } from "@/config/api.config";
 import useProvince from "@/hook/useProvince";
 import { alerts } from "@/libs/alerts";
@@ -13,12 +14,11 @@ import {
   MapPinHouse,
   X,
 } from "lucide-react";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import Select from "react-select";
 
-const LiveContact = ({ address, tambon, amphure, province, reload }) => {
+const LiveContact = () => {
   const [editing, setEditing] = useState(false);
   const { loading, provinceOptions, provinces } = useProvince();
   const {
@@ -30,18 +30,52 @@ const LiveContact = ({ address, tambon, amphure, province, reload }) => {
     setValue,
   } = useForm({
     defaultValues: {
-      address: address || "",
-      tambon: tambon || "",
-      amphure: amphure || "",
-      province: province || "",
+      address: "",
+      tambon: "",
+      amphure: "",
+      province: "",
     },
   });
-  const amphures = provinces.filter((p) => p.name_th === watch("province"))[0]
-    ?.districts;
-  const tambons = amphures?.filter((p) => p.name_th === watch("amphure"))[0]
-    ?.sub_districts;
-  const zipCode = tambons?.filter((p) => p.name_th === watch("tambon"))[0]
-    ?.zip_code;
+  const [amphures, setAmphures] = useState([]);
+  const [tambons, setTambons] = useState([]);
+  const [zipCode, setZipCode] = useState("");
+
+  const [load, setLoad] = useState(false);
+  const fetchUserContract = async () => {
+    setLoad(true);
+    try {
+      const res = await axios.get(apiConfig.rmuAPI + `/alumni/contract`, {
+        withCredentials: true,
+      });
+      if (res.status === 200) {
+        const { address, tambon, amphure, province, zipcode } = res.data;
+        console.log("🚀 ~ fetchUserContract ~ province:", province);
+        reset({
+          address: address || "",
+          tambon: tambon || "",
+          amphure: amphure || "",
+          province: province || "",
+        });
+        const amphures = provinces.filter((p) => p.name_th === province)[0]
+          ?.districts;
+        setAmphures(
+          provinces.filter((p) => p.name_th === province)[0]?.districts
+        );
+        const tambonsOp = amphures?.filter((p) => p.name_th === amphure)[0]
+          ?.sub_districts;
+        setTambons(tambonsOp);
+        setZipCode(zipcode);
+      }
+    } catch (error) {
+      console.error(error);
+      alerts.err();
+    } finally {
+      setLoad(false);
+    }
+  };
+  useEffect(() => {
+    fetchUserContract();
+  }, [provinces]);
 
   const [saving, setSaving] = useState(false);
   const saveData = async (data) => {
@@ -66,7 +100,8 @@ const LiveContact = ({ address, tambon, amphure, province, reload }) => {
       }
       if (res?.status === 200) {
         await alerts.success();
-        reload();
+        fetchUserContract();
+        setEditing(false);
       }
     } catch (error) {
       console.error(error);
@@ -75,6 +110,14 @@ const LiveContact = ({ address, tambon, amphure, province, reload }) => {
       setSaving(false);
     }
   };
+
+  if (load)
+    return (
+      <div className="w-full flex flex-col items-center  gap-2 py-10">
+        <Loading type={2} />
+        <p>กำลังโหลด...</p>
+      </div>
+    );
 
   return (
     <div className="w-full flex flex-col">
@@ -85,8 +128,8 @@ const LiveContact = ({ address, tambon, amphure, province, reload }) => {
           <span className="flex items-center gap-2 absolute top-0 right-2">
             <button
               onClick={() => {
-                setEditing(false);
-                reset();
+               fetchUserContract();
+               setEditing(false);
               }}
               className="flex items-center gap-2 p-1.5 px-2 rounded-lg border border-gray-300 shadow-md bg-white"
             >
@@ -136,11 +179,113 @@ const LiveContact = ({ address, tambon, amphure, province, reload }) => {
               )}
             />
           ) : (
-            <p>{watch("address") || address || "-"}</p>
+            <p>{watch("address") || "-"}</p>
           )}
           {errors.address && editing && (
             <small className="text-sm text-red-500 mt-1 ml-1">
               {errors.address.message}
+            </small>
+          )}
+        </div>
+      </span>
+      <span className="w-full mt-5 flex items-center gap-3">
+        <MapPinCheck size={18} color="blue" />
+        <div className="w-full lg:w-1/2 flex flex-col gap-0.5">
+          <p className="text-sm text-gray-500">จังหวัด</p>
+          {editing ? (
+            <Controller
+              name="province"
+              rules={{
+                required: "โปรดระบุจังหวัด",
+              }}
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  isDisabled={loading}
+                  options={provinceOptions}
+                  placeholder={"เลือกจังหวัด"}
+                  value={
+                    provinces
+                      ?.map((a) => ({
+                        label: a.name_th,
+                        value: a.name_th,
+                      }))
+                      .find((t) => t.value === watch("province")) || null
+                  }
+                  isSearchable
+                  onChange={(option) => {
+                    setValue("amphure", "");
+                    setValue("tambon", "");
+                    setZipCode("");
+                    setAmphures(
+                      provinces.filter((p) => p.name_th === option.value)[0]
+                        ?.districts
+                    );
+                    setValue("province", option.value);
+                  }}
+                  className="mt-1 w-full"
+                />
+              )}
+            />
+          ) : (
+            <p>{watch("province") || "-"}</p>
+          )}
+          {errors.province && editing && (
+            <small className="text-sm text-red-500 mt-1 ml-1">
+              {errors.province.message}
+            </small>
+          )}
+        </div>
+      </span>
+      <span className="w-full mt-5 flex items-center gap-3">
+        <Map size={18} color="blue" />
+        <div className="w-full lg:w-1/2 flex flex-col gap-0.5">
+          <p className="text-sm text-gray-500">อำเภอ/เขต</p>
+          {editing ? (
+            <Controller
+              name="amphure"
+              rules={{
+                required: "โปรดเลือกอำเภอ",
+              }}
+              control={control}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  isDisabled={loading || !watch("province")}
+                  options={amphures?.map((a) => ({
+                    label: a.name_th,
+                    value: a.name_th,
+                  }))}
+                  value={
+                    amphures
+                      ?.map((a) => ({
+                        label: a.name_th,
+                        value: a.name_th,
+                      }))
+                      .find((t) => t.value === watch("amphure")) || null
+                  }
+                  placeholder={"เลือกอำเภอ"}
+                  onChange={(option) => {
+                    setValue("tambon", "");
+                    setValue("amphure", option.value);
+                    setZipCode("");
+                    setTambons(
+                      amphures?.filter((p) => p.name_th === option.value)[0]
+                        ?.sub_districts
+                    );
+                  }}
+                  isSearchable
+                  className="mt-1 w-full"
+                />
+              )}
+            />
+          ) : (
+            <p>{watch("amphure") || "-"}</p>
+          )}
+          {errors.amphure && editing && (
+            <small className="text-sm text-red-500 mt-1 ml-1">
+              {errors.amphure.message}
             </small>
           )}
         </div>
@@ -178,6 +323,10 @@ const LiveContact = ({ address, tambon, amphure, province, reload }) => {
                   placeholder={"เลือกตำบล"}
                   onChange={(option) => {
                     setValue("tambon", option.value);
+                    setZipCode(
+                      tambons?.filter((p) => p.name_th === option.value)[0]
+                        ?.zip_code
+                    );
                   }}
                   isSearchable
                   className="mt-1 w-full"
@@ -190,100 +339,6 @@ const LiveContact = ({ address, tambon, amphure, province, reload }) => {
           {errors.tambon && editing && (
             <small className="text-sm text-red-500 mt-1 ml-1">
               {errors.tambon.message}
-            </small>
-          )}
-        </div>
-      </span>
-
-      <span className="w-full mt-5 flex items-center gap-3">
-        <Map size={18} color="blue" />
-        <div className="w-full lg:w-1/2 flex flex-col gap-0.5">
-          <p className="text-sm text-gray-500">อำเภอ/เขต</p>
-          {editing ? (
-            <Controller
-              name="amphure"
-              rules={{
-                required: "โปรดเลือกอำเภอ",
-              }}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  isDisabled={loading || !watch("province")}
-                  options={amphures?.map((a) => ({
-                    label: a.name_th,
-                    value: a.name_th,
-                  }))}
-                  value={
-                    amphures
-                      ?.map((a) => ({
-                        label: a.name_th,
-                        value: a.name_th,
-                      }))
-                      .find((t) => t.value === watch("amphure")) || null
-                  }
-                  placeholder={"เลือกอำเภอ"}
-                  onChange={(option) => {
-                    setValue("tambon", "");
-                    setValue("amphure", option.value);
-                  }}
-                  isSearchable
-                  className="mt-1 w-full"
-                />
-              )}
-            />
-          ) : (
-            <p>{watch("amphure") || "-"}</p>
-          )}
-          {errors.amphure && editing && (
-            <small className="text-sm text-red-500 mt-1 ml-1">
-              {errors.amphure.message}
-            </small>
-          )}
-        </div>
-      </span>
-
-      <span className="w-full mt-5 flex items-center gap-3">
-        <MapPinCheck size={18} color="blue" />
-        <div className="w-full lg:w-1/2 flex flex-col gap-0.5">
-          <p className="text-sm text-gray-500">จังหวัด</p>
-          {editing ? (
-            <Controller
-              name="province"
-              rules={{
-                required: "โปรดระบุจังหวัด",
-              }}
-              control={control}
-              render={({ field }) => (
-                <Select
-                  {...field}
-                  isDisabled={loading}
-                  options={provinceOptions}
-                  placeholder={"เลือกจังหวัด"}
-                  value={
-                    provinces
-                      ?.map((a) => ({
-                        label: a.name_th,
-                        value: a.name_th,
-                      }))
-                      .find((t) => t.value === watch("province")) || null
-                  }
-                  isSearchable
-                  onChange={(option) => {
-                    setValue("amphure", "");
-                    setValue("tambon", "");
-                    setValue("province", option.value);
-                  }}
-                  className="mt-1 w-full"
-                />
-              )}
-            />
-          ) : (
-            <p>{watch("province") || "-"}</p>
-          )}
-          {errors.province && editing && (
-            <small className="text-sm text-red-500 mt-1 ml-1">
-              {errors.province.message}
             </small>
           )}
         </div>

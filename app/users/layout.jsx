@@ -6,6 +6,7 @@ import useGetSession from "@/hook/useGetSeesion";
 import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { AppProvider } from "@/context/app.context";
+import Footer from "@/layouts/footer";
 
 const Layout = ({ children }) => {
   const { user, checking } = useGetSession();
@@ -28,21 +29,22 @@ const Layout = ({ children }) => {
     <AppProvider>
       <div className="w-screen h-screen flex items-center">
         <Menu />
-        <div className="flex flex-col w-full h-full overflow-auto p-3">
+        <div className="flex flex-col w-full h-full overflow-auto">
           {/* header */}
-          {pathName.split("/")[2] !== "news" && (
-            <header className="mb-2 w-full flex items-center gap-2 pb-2 border-b border-gray-300">
+          {/* {pathName.split("/")[2] !== "news" && (
+            <header className="mb-2 p-2 w-full flex items-center gap-2 pb-2 border-b border-gray-300">
               <Image alt="logo" priority className="w-10 h-10" src={logo} />
               <div className="flex flex-col lg:flex-row lg:gap-2">
                 <h1 className="font-bold text-sm text-blue-600">RMU ALUMNI</h1>
                 <p className="text-sm ">
-                  : ระบบศิษย์เก่า มหาวิทยาลัยราชภัฏมหาสารคาม
+                  : ระบบสารสนเทศเครือข่ายศิษย์เก่า มหาวิทยาลัยราชภัฏมหาสารคาม
                 </p>
               </div>
             </header>
-          )}
+          )} */}
 
           {children}
+          <Footer/>
         </div>
       </div>
     </AppProvider>

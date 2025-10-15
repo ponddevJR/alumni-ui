@@ -58,7 +58,7 @@ const NewsAvtivity = ({ item, screenWidth, fetchData }) => {
 
   return (
     <FadeInSection
-      className={`w-[${screenWidth}px] hover:scale-101 cursor-pointer hover:shadow-gray-400 flex flex-col gap-2 rounded-lg shadow-md transition-all duration-200 overflow-hidden border border-gray-300`}
+      className={`p-2.5 w-[${screenWidth}px] hover:scale-101 cursor-pointer hover:shadow-gray-400 flex flex-col gap-2 rounded-lg shadow-md transition-all duration-200 overflow-hidden border border-gray-300`}
     >
       <div className="w-full h-[180px] relative">
         {" "}
