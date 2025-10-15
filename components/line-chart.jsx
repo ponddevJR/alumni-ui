@@ -1,4 +1,5 @@
 "use client";
+import { FaFolderOpen } from "react-icons/fa";
 import {
   LineChart,
   Line,
@@ -29,34 +30,41 @@ const AlumniLineChart = ({ data }) => {
         จังหวัดที่ศิษย์เก่าทำงานมากที่สุด
       </h2>
 
-      <ResponsiveContainer width="100%" height="90%">
-        <LineChart
-          data={data}
-          margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
-        >
-          <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-          <XAxis dataKey="company_place" tick={{ fontSize: 15 }} />
-          <YAxis allowDecimals={false} />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: "#f9fafb",
-              border: "1px solid #ddd",
-              borderRadius: "8px",
-            }}
-            labelStyle={{ fontWeight: "bold" }}
-          />
-          <Legend verticalAlign="top" height={36} />
-          <Line
-            type="monotone"
-            dataKey="value"
-            stroke="#4F86F7" // สีฟ้าน้ำเงินสด
-            strokeWidth={3}
-            dot={{ r: 6, fill: "#4F86F7", stroke: "#fff", strokeWidth: 2 }}
-            activeDot={{ r: 8 }}
-            name="จำนวนศิษย์เก่า(คน)"
-          />
-        </LineChart>
-      </ResponsiveContainer>
+      {data?.length > 0 ? (
+        <ResponsiveContainer width="100%" height="90%">
+          <LineChart
+            data={data}
+            margin={{ top: 10, right: 30, left: 0, bottom: 10 }}
+          >
+            <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+            <XAxis dataKey="company_place" tick={{ fontSize: 15 }} />
+            <YAxis allowDecimals={false} />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#f9fafb",
+                border: "1px solid #ddd",
+                borderRadius: "8px",
+              }}
+              labelStyle={{ fontWeight: "bold" }}
+            />
+            <Legend verticalAlign="top" height={36} />
+            <Line
+              type="monotone"
+              dataKey="value"
+              stroke="#4F86F7" // สีฟ้าน้ำเงินสด
+              strokeWidth={3}
+              dot={{ r: 6, fill: "#4F86F7", stroke: "#fff", strokeWidth: 2 }}
+              activeDot={{ r: 8 }}
+              name="จำนวนศิษย์เก่า(คน)"
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      ) : (
+        <div className="w-full h-full flex flex-col text-sm text-gray-500 items-center justify-center gap-1">
+          <FaFolderOpen size={30} />
+          <p>ไม่พบข้อมูล</p>
+        </div>
+      )}
     </div>
   );
 };

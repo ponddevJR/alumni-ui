@@ -17,6 +17,7 @@ const Privacy = () => {
   const [seeFacebook, setSeeFacebook] = useState(false);
   const [seeAddress, setSeeAddress] = useState(false);
   const [seeWorkExprerience, setSeeWorkExperince] = useState(false);
+  const [seeSalary, setSeeSalary] = useState(false);
 
   const [allowedAlumniSendEmail, setAllowedAlumniText] = useState(false);
   const [allowedProfessorSendEmail, setAllowedProfessorText] = useState(false);
@@ -36,6 +37,7 @@ const Privacy = () => {
       setSeeFacebook(res?.data?.seeFacebook);
       setSeeAddress(res?.data?.seeAddress);
       setSeeWorkExperince(res?.data?.seeWorkExprerience);
+      setSeeSalary(res?.data?.seeSalary);
 
       setAllowedAlumniText(res?.data?.allowedAlumniSendEmail);
       setAllowedProfessorText(res?.data?.allowedProfessorSendEmail);
@@ -68,6 +70,7 @@ const Privacy = () => {
         seeFacebook,
         seeAddress,
         seeWorkExprerience,
+        seeSalary,
         allowedAlumniSendEmail,
         allowedProfessorSendEmail,
       };
@@ -258,32 +261,60 @@ const Privacy = () => {
         </span>
         {/* work experience */}
         {user?.roleId < 2 && (
-          <span className="mt-6 pb-5 border-b border-gray-300 flex items-center justify-between w-full">
-            <div className="flex flex-col gap-0.5">
-              <label htmlFor="">ประวัติการทำงาน</label>
-              <p className="text-sm text-gray-500">
-                อนุญาตให้ผู้ใช้ระบบคนอื่นมองเห็นประวัติการทำงานของคุณ
-              </p>
-            </div>
-            <div className="flex items-center gap-3">
-              {seeWorkExprerience ? (
-                <Eye size={18} color="green" />
-              ) : (
-                <EyeOff size={18} color="red" />
-              )}
+          <>
+            <span className="mt-6 pb-5 border-b border-gray-300 flex items-center justify-between w-full">
+              <div className="flex flex-col gap-0.5">
+                <label htmlFor="">ประวัติการทำงาน</label>
+                <p className="text-sm text-gray-500">
+                  อนุญาตให้ผู้ใช้ระบบคนอื่นมองเห็นประวัติการทำงานของคุณ
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                {seeWorkExprerience ? (
+                  <Eye size={18} color="green" />
+                ) : (
+                  <EyeOff size={18} color="red" />
+                )}
 
-              <Switch
-                onColor="#32CD32"
-                checked={seeWorkExprerience}
-                onChange={() => setSeeWorkExperince(!seeWorkExprerience)}
-                offColor="#d1d5db"
-                uncheckedIcon={false}
-                checkedIcon={false}
-                width={60}
-                height={28}
-              />
-            </div>
-          </span>
+                <Switch
+                  onColor="#32CD32"
+                  checked={seeWorkExprerience}
+                  onChange={() => setSeeWorkExperince(!seeWorkExprerience)}
+                  offColor="#d1d5db"
+                  uncheckedIcon={false}
+                  checkedIcon={false}
+                  width={60}
+                  height={28}
+                />
+              </div>
+            </span>
+            <span className="mt-6 pb-5 border-b border-gray-300 flex items-center justify-between w-full">
+              <div className="flex flex-col gap-0.5">
+                <label htmlFor="">ข้อมูลเงินเดือน</label>
+                <p className="text-sm text-gray-500">
+                  อนุญาตให้ผู้ใช้ระบบคนอื่นมองเห็นข้อมูลเงินเดือนของคุณ
+                </p>
+              </div>
+              <div className="flex items-center gap-3">
+                {seeSalary ? (
+                  <Eye size={18} color="green" />
+                ) : (
+                  <EyeOff size={18} color="red" />
+                )}
+
+                <Switch
+                  onColor="#32CD32"
+                  checked={seeSalary}
+                  onChange={() => setSeeSalary(!seeSalary)}
+                  offColor="#d1d5db"
+                  uncheckedIcon={false}
+                  checkedIcon={false}
+                  width={60}
+                  height={28}
+                />
+              </div>
+            </span>
+          </>
         )}
       </div>
 

@@ -115,7 +115,9 @@ const UserDetail = () => {
       return NO_PROFILE_IMG;
     }
 
-    return apiConfig.imgAPI + userData?.profile;
+    return userData?.profile
+      ? apiConfig.imgAPI + userData?.profile
+      : NO_PROFILE_IMG;
   };
 
   const canviewWorkExprerience = () => {
@@ -131,6 +133,25 @@ const UserDetail = () => {
     }
 
     if (!userData?.user_privacy?.seeWorkExprerience) {
+      return false;
+    }
+
+    return true;
+  };
+
+  const canViewSalary = () => {
+    const loginUserId = user?.id;
+    if (
+      loginUserId ===
+        (roleId < 2 ? userData?.alumni_id : userData?.professor_id) ||
+      (user?.roleId >= 3 && user?.facultyId === userData?.facultyId) ||
+      (user?.roleId === 2 && user?.departmentId === userData?.departmentId) ||
+      user?.roleId > 3
+    ) {
+      return true;
+    }
+
+    if (!userData?.user_privacy?.seeSalary) {
       return false;
     }
 
@@ -653,7 +674,7 @@ const UserDetail = () => {
                 </p>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-                  {!canviewWorkExprerience() ? (
+                  {!canViewSalary() ? (
                     <Link
                       href="/"
                       className="text-[0.9rem] hover:text-blue-500 hover:underline"
@@ -667,9 +688,7 @@ const UserDetail = () => {
                           <BriefcaseBusiness size={18} color="blue" />
                         </div>
                         <div className="flex flex-col">
-                          <p className="text-sm text-gray-50">
-                            จำนวนงานที่เคยทำ
-                          </p>
+                          <p className="text-sm text-gray-50">จำนวนงานที่ทำ</p>
                           <p className="text-white">
                             {userData?.workTimes} งาน
                           </p>

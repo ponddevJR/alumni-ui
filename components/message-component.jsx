@@ -26,7 +26,8 @@ import { v4 as uuid } from "uuid";
 import useGetSession from "@/hook/useGetSeesion";
 
 const SendMessage = () => {
-  const { user } = useGetSession();
+  const { user, checking } = useGetSession();
+
   const {
     handleSubmit,
     reset,
@@ -54,6 +55,12 @@ const SendMessage = () => {
   const [isSelectAll, setIsSelectAll] = useState(false);
   const [selectId, setSelectId] = useState([]);
 
+  useEffect(() => {
+    if (isSelectAll) {
+      setSelectId(alumniList.map((a) => a?.alumni_id));
+    }
+  }, [isSelectAll]);
+
   const forwardPage = () => {
     if (page >= totalPage) return;
     setPage(page + 1);
@@ -63,6 +70,11 @@ const SendMessage = () => {
     if (page <= 1) return;
     setPage(page - 1);
   };
+
+  useEffect(() => {
+    setDepartmentId(user?.roleId < 3 ? `${user?.departmentId}` : "");
+    setFacultyId(user?.roleId <= 3 ? `${user?.facultyId}` : "");
+  }, [user]);
 
   const fetchAlumniList = async (
     page,
@@ -103,14 +115,18 @@ const SendMessage = () => {
   };
 
   useEffect(() => {
-    fetchAlumniList(
-      page,
-      sort,
-      facultyId,
-      departmentId,
-      selectYearStart,
-      selectYearEnd
-    );
+    const timeout = setTimeout(() => {
+      fetchAlumniList(
+        page,
+        sort,
+        facultyId,
+        departmentId,
+        selectYearStart,
+        selectYearEnd
+      );
+    }, 500);
+
+    return () => clearTimeout(timeout);
   }, [
     selectYearStart,
     selectYearEnd,
@@ -126,8 +142,8 @@ const SendMessage = () => {
     setSelectYearEnd("");
     setSelectYearStart("");
     setSort(JSON.stringify({ year_start: "desc" }));
-    setFacultyId("");
-    setDepartmentId("");
+    setDepartmentId(user?.roleId < 3 ? `${user?.departmentId}` : "");
+    setFacultyId(user?.roleId <= 3 ? `${user?.facultyId}` : "");
     setIsSelectAll(false);
   };
 
@@ -270,67 +286,70 @@ const SendMessage = () => {
           </span>
 
           <div className="mt-3 grid grid-cols-1 lg:grid-cols-3 gap-3">
-            <Select
-              placeholder="ค้นหาคณะ"
-              className="z-50 lg:col-span-1 col-span-4 text-sm"
-              options={faculties.map((f) => ({
-                label: f.name,
-                value: f.id,
-              }))}
-              value={
-                faculties
-                  .map((f) => ({
-                    label: f.name,
-                    value: f.id,
-                  }))
-                  .find((f) => f.value == facultyId) || null
-              }
-              onChange={(option) => {
-                setFacultyId(option.value);
-                setDepartmentId("");
-                setDepartment(null);
-              }}
-            />
-            <Select
-              placeholder="ค้นหาสาขาวิชา"
-              className="z-50 lg:col-span-2 col-span-4 text-sm"
-              options={
-                facultyId
-                  ? departments
-                      .filter((d) => {
-                        if (Number(facultyId) < 18) {
-                          return (
-                            `${d.id}`.substring(0, 1) ==
-                            facultyId?.substring(1, 2)
-                          );
-                        } else if (Number(facultyId) > 18) {
-                          return `${d.id}`.substring(0, 1) == 62;
-                        } else {
-                          return `${d.id}`.substring(0, 1) == 21;
-                        }
-                      })
-                      .map((d) => ({
+            {user?.roleId > 3 && (
+              <Select
+                placeholder="ค้นหาคณะ"
+                className="z-50 lg:col-span-1 col-span-4 text-sm"
+                options={faculties.map((f) => ({
+                  label: f.name,
+                  value: f.id,
+                }))}
+                value={
+                  faculties
+                    .map((f) => ({
+                      label: f.name,
+                      value: f.id,
+                    }))
+                    .find((f) => f.value == facultyId) || null
+                }
+                onChange={(option) => {
+                  setFacultyId(option.value);
+                  setDepartmentId("");
+                }}
+              />
+            )}
+            {user?.roleId > 2 && (
+              <Select
+                placeholder="ค้นหาสาขาวิชา"
+                className="z-50 lg:col-span-2 col-span-4 text-sm"
+                options={
+                  facultyId
+                    ? departments
+                        .filter((d) => {
+                          if (Number(facultyId) < 18) {
+                            return (
+                              `${d.id}`.substring(0, 1) ==
+                              facultyId?.substring(1, 2)
+                            );
+                          } else if (Number(facultyId) > 18) {
+                            return `${d.id}`.substring(0, 1) == 62;
+                          } else {
+                            return `${d.id}`.substring(0, 1) == 21;
+                          }
+                        })
+                        .map((d) => ({
+                          label: d.name,
+                          value: d.id,
+                        }))
+                    : departments.map((d) => ({
                         label: d.name,
                         value: d.id,
                       }))
-                  : departments.map((d) => ({
-                      label: d.name,
-                      value: d.id,
+                }
+                value={
+                  departments
+                    .map((f) => ({
+                      label: f.name,
+                      value: f.id,
                     }))
-              }
-              value={
-                departments
-                  .map((f) => ({
-                    label: f.name,
-                    value: f.id,
-                  }))
-                  .find((f) => f.value == departmentId) || null
-              }
-              onChange={(option) => {
-                setDepartmentId(option.value);
-                setDepartment(option);
-              }}
-            />
+                    .find((f) => f.value == departmentId) || null
+                }
+                onChange={(option) => {
+                  setDepartmentId(option.value);
+                }}
+              />
+            )}
+
             <SelectYearStart
               setSelectYearStart={setSelectYearStart}
               selectYearStart={selectYearStart}
@@ -351,7 +370,7 @@ const SendMessage = () => {
           </div>
 
           <div className="w-full flex text-sm items-center justify-between mt-4 ">
-            <div className="flex items-center gap-2">
+            <div className="flex flex-col lg:flex-row lg:items-center gap-2">
               <p className="text-sm text-gray-700">เลือกรายชื่อผู้รับ</p>
               <span className="flex items-center gap-2 text-sm">
                 <input
@@ -359,7 +378,6 @@ const SendMessage = () => {
                   checked={isSelectAll}
                   onChange={() => {
                     setIsSelectAll(!isSelectAll);
-                    setSelectId([]);
                   }}
                   className="mt-0.5"
                 />
@@ -387,7 +405,7 @@ const SendMessage = () => {
           </div>
 
           <div className="flex flex-col mt-1.5 w-full h-[420px] overflow-y-auto ">
-            {loading ? (
+            {loading || checking ? (
               <div className="w-full h-full flex flex-col gap-2 items-center justify-center">
                 <Loading type={2} />
                 <p>กำลังโหลด...</p>
@@ -411,13 +429,7 @@ const SendMessage = () => {
                     type="checkbox"
                     name=""
                     id=""
-                    onChange={() => {
-                      setSelectId((prev) =>
-                        prev !== a?.alumni_id
-                          ? [...prev, a?.alumni_id]
-                          : prev.filter((p) => p !== a?.alumni_id)
-                      );
-                    }}
+                    readOnly
                   />
                   <div className="flex flex-col gap-0.5">
                     <p className="">

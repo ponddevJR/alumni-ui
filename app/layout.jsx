@@ -1,7 +1,6 @@
 import { Sarabun } from "next/font/google";
 import "./globals.css";
-import ProgressBar from "@/components/progressbar";
-
+import PaginateProgress from "@/components/paginate-progress";
 
 const sarabun = Sarabun({
   weight: ["400", "800"],
@@ -23,7 +22,7 @@ export default function RootLayout({ children }) {
         <link rel="icon" href="/logo_rmu.png" />
       </head>
       <body className={`${sarabun.className} antialiased`}>
-        <ProgressBar />
+        <PaginateProgress />
         {children}
       </body>
     </html>

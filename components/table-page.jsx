@@ -122,7 +122,7 @@ const TablePage = ({
   ]);
   return (
     <>
-      <div className="w-full items-start flex flex-col px-5 pt-3">
+      <div className="w-full h-full items-start flex flex-col px-5 pt-3">
         {user?.roleId < 5 && (
           <button
             onClick={() => {

@@ -39,6 +39,7 @@ import { useRouter } from "next/navigation";
 import {
   FaCoins,
   FaEllipsisH,
+  FaFolderOpen,
   FaGlobe,
   FaGraduationCap,
   FaMapMarked,
@@ -277,7 +278,7 @@ const Dashboard = () => {
         const result = data.map((d) => ({
           name:
             user?.roleId < 4 || selectFaculty
-              ? departments.find((f) => f.id == d.departmentId).name
+              ? departments.find((f) => f.id == d.departmentId)?.name
               : faculties.find((f) => f.id == d.facultyId).name,
           value: Math.round(d.avgSalary),
         }));
@@ -313,10 +314,6 @@ const Dashboard = () => {
       if (res.status === 200) {
         setPieWorkRate(res.data.result);
         setOtherCountryList(res?.data?.countryList);
-        console.log(
-          "🚀 ~ fetchWorkPlaceRate ~ res?.data?.countryList:",
-          res?.data?.countryList
-        );
       }
     } catch (error) {
       console.error(error);
@@ -507,7 +504,7 @@ const Dashboard = () => {
           <h1 className="">
             ภาพรวมสรุปข้อมูลของศิษย์เก่า {headerTitle} ภายใน
             {user?.roleId < 3
-              ? "สาขา" + departmentText(user?.departmentId) || ""
+              ? departmentText(user?.departmentId) || ""
               : user?.roleId > 3
               ? "มหาวิทยาลัยราชภัฏมหาสารคาม"
               : facultyText(user?.facultyId) || ""}
@@ -558,7 +555,7 @@ const Dashboard = () => {
         </div>
       </span>
 
-      <div className="w-full flex flex-col h-auto bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 pt-2 px-8">
+      <div className="w-full flex flex-col h-auto bg-gradient-to-r from-gray-50 via-gray-100 to-gray-50 pt-2 px-8">
         <div className=" p-2 pt-3.5 w-full grid lg:grid-cols-4 grid-cols-1 md:grid-cols-2 gap-3.5">
           {/* all */}
           <FadeInSection className="cursor-pointer bg-white border border-gray-200 hover:shadow-gray-400 transition-all duration-300 relative flex items-center justify-center gap-6 p-3 px-5 rounded-lg shadow-md border-l-6 flex-row-reverse border-l-blue-500">
@@ -1054,7 +1051,7 @@ const Dashboard = () => {
                           router.push(`/users/search/${a?.alumni_id}/1`);
                         }}
                         key={index}
-                        className="flex items-center p-2.5 border-b border-gray-700 cursor-pointer gap-2.5 transition-all duration-200 hover:bg-gray-700 rounded-lg"
+                        className="flex items-center p-2.5 border-b border-gray-200 cursor-pointer gap-2.5 transition-all duration-200 hover:bg-blue-100"
                       >
                         <FadeInSection className="rounded-full bg-blue-500 w-[50px] h-[50px] overflow-hidden">
                           <Image
@@ -1119,10 +1116,19 @@ const Dashboard = () => {
                 </label>
               </span>
 
-              <WorkPlaceRatePieChartComponent
-                data={pieWorkRate}
-                openToolTip={true}
-              />
+              {pieWorkRate
+                .map((p) => p.value)
+                .reduce((total, p) => (total += p), 0) > 0 ? (
+                <WorkPlaceRatePieChartComponent
+                  data={pieWorkRate}
+                  openToolTip={true}
+                />
+              ) : (
+                <div className="w-full h-full flex flex-col text-sm text-gray-500 items-center justify-center gap-1">
+                  <FaFolderOpen size={30} />
+                  <p>ไม่พบข้อมูล</p>
+                </div>
+              )}
             </FadeInSection>
           </FadeInSection>
         </FadeInSection>
@@ -1137,11 +1143,7 @@ const Dashboard = () => {
 
         <FadeInSection className="bg-white mt-5 w-ful p-5 rounded-lg border border-gray-300 mx-2 shadow-md">
           <FadeInSection className="w-full flex flex-col gap-3.5 mt-3 overflow-y-auto">
-            {otherCountryList.length > 0 ? (
-              <AlumniColumnChart rawData={otherCountryList} />
-            ) : (
-              <NoData bg={2} />
-            )}
+            <AlumniColumnChart rawData={otherCountryList} />
           </FadeInSection>
         </FadeInSection>
 

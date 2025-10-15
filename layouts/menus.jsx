@@ -49,7 +49,7 @@ const Menu = () => {
       title: "ความเป็นส่วนตัว",
       icon: <ShieldUser size={20} />,
       url: "/users/privacy",
-      allowed: [1, 2],
+      allowed: [1],
     },
     {
       title: "ประวัติการทำงาน",
@@ -84,8 +84,8 @@ const Menu = () => {
     {
       title: "ส่งข้อความ",
       icon: <MessageCircle size={20} />,
-      url: user?.roleId === 4 ? "/users/message" : "/alumni-president/message",
-      allowed: [4, 5],
+      url: user?.roleId === 5 ? "/alumni-president/message" : "/users/message",
+      allowed: [2, 3, 4, 5],
     },
     {
       title: "บัญชี",
