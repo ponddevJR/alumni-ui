@@ -1,4 +1,5 @@
 "use client";
+import { NO_PROFILE_IMG } from "@/app/users/profile/alumni-profile";
 import { apiConfig } from "@/config/api.config";
 import useGetSession from "@/hook/useGetSeesion";
 import { alerts } from "@/libs/alerts";
@@ -157,7 +158,7 @@ const Menu = () => {
                   src={
                     user?.profile
                       ? apiConfig.imgAPI + user?.profile
-                      : "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png"
+                      : NO_PROFILE_IMG
                   }
                   width={50}
                   height={50}
