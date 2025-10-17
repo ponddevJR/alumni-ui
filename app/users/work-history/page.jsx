@@ -173,9 +173,11 @@ const WorkHistory = () => {
         setWorkInThai(false);
         setShowJobForm(false);
         setShowOnTheLineErr(false);
+        setIsOnTheLine(false);
+        setShowJobForm(false);
       }
       reset();
-      fetchWorkExprerience();
+      fetchWorkExprerience(searchText, dataType, page, sort, user);
     } catch (error) {
       console.error(error);
       alerts.err("โปรดตรวจสอบเครือข่ายแล้วลองอีกครั้ง");

@@ -34,6 +34,7 @@ const Page = () => {
   const [showPassDetail, setShowPassDetail] = useState(false);
   const [showWonderDetail, setShowWonderDetail] = useState(false);
   const [showAuthKeyDetail, setShowAuthKeyDetail] = useState(false);
+  const [isRedirect, setIsRedirect] = useState(false);
 
   const [passKey, setPassKey] = useState("");
   const [firstLogin, setFirstLogin] = useState(false);
@@ -69,6 +70,7 @@ const Page = () => {
       }
 
       if (res?.data?.ok) {
+        setIsRedirect(true);
         alerts.success("เข้าสู่ระบบแล้ว!");
         if (res?.data?.roleId > 1 && res?.data?.roleId < 5) {
           router.push("/users/dashboard");
@@ -102,6 +104,7 @@ const Page = () => {
     try {
       const res = await authService.authSuccess({ alumni_id: passkeyID });
       if (res?.data?.ok) {
+        setIsRedirect(true);
         alerts.success("เข้าสู่ระบบแล้ว!");
         if (res?.data?.roleId > 1) {
           router.push("/users/dashboard");
@@ -288,8 +291,15 @@ const Page = () => {
             )}
           </div>
 
+          {isRedirect && (
+            <span className="w-full flex items-center gap-2 text-sm text-gray-700 justify-center mt-3.5">
+              <div className="w-6 h-6 border-4 border-gray-200 rounded-full border-t-blue-600 animate-spin"></div>
+              <p>กำลังเปลี่ยนหน้า...</p>
+            </span>
+          )}
+
           <button
-            disabled={loading || checking}
+            disabled={loading || checking || isRedirect}
             className="mt-7 hover:bg-gradient-to-l rounded-lg flex items-center justify-center p-3 bg-gradient-to-r from-blue-500 to-blue-300 w-full text-white gap-3"
           >
             {loading ? (

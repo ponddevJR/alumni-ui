@@ -57,10 +57,6 @@ const AlumniProfile = () => {
       });
       if (res?.status === 200) {
         setUserData(res?.data?.alumni);
-        console.log(
-          "🚀 ~ fetchUserData ~ res?.data?.alumni:",
-          res?.data?.alumni
-        );
         setProfileImage(
           res?.data?.alumni?.profile
             ? apiConfig.imgAPI + res?.data?.alumni?.profile

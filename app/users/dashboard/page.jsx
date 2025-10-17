@@ -22,8 +22,6 @@ import {
 } from "lucide-react";
 import { faculties, departments } from "@/data/faculty";
 import { useEffect, useState } from "react";
-import Link from "next/link";
-import MostLiveProvince from "./most-live-province";
 import useGetSession from "@/hook/useGetSeesion";
 import { departmentText, facultyText } from "@/components/faculty-p";
 import { alerts } from "@/libs/alerts";
@@ -1162,7 +1160,9 @@ const Dashboard = () => {
               data={populationJob}
             />
           ) : (
-            <NoData bg={2} />
+            <div className="w-full flex items-center justify-center py-36">
+              <NoData bg={2} />
+            </div>
           )}
         </FadeInSection>
       </div>
