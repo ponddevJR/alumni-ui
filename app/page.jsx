@@ -63,7 +63,7 @@ const Page = () => {
       if (res?.data?.isFirstLogin) {
         setFirstLogin(true);
         setPassKey(res?.data?.key);
-        setPassKeyID(res?.data?.alumni_id);
+        setPassKeyID(res?.data?.user);
       }
       if (res.data?.err) {
         return alerts.err(res.data?.err);
@@ -134,7 +134,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-br from-blue-100 to-blue-300 p-10 w-screen h-screen flex items-center justify-center">
+      <div className="bg-gradient-to-br from-blue-100 to-blue-300 p-5 lg:p-10 w-screen h-screen flex items-center justify-center">
         <Image
           className="w-full h-full object-cover absolute top-0"
           alt="bg"
@@ -299,11 +299,18 @@ const Page = () => {
           )}
 
           <button
-            disabled={loading || checking || isRedirect}
-            className="mt-7 hover:bg-gradient-to-l rounded-lg flex items-center justify-center p-3 bg-gradient-to-r from-blue-500 to-blue-300 w-full text-white gap-3"
+            disabled={loading || isRedirect}
+            className={`mt-7 hover:bg-gradient-to-l w-full rounded-lg ${
+              loading ? "flex-col lg:flex-row " : "flex"
+            } items-center justify-center p-3 bg-gradient-to-r from-blue-500 to-blue-300 w-full text-white gap-3`}
           >
             {loading ? (
-              <Loading type={1} />
+              <>
+                <Loading type={1} />
+                <p className="text-xs">
+                  อาจใช้เวลานานโปรดรอสักครู่... หรือลองใหม่หลังจาก 2-3 นาที
+                </p>
+              </>
             ) : !firstLogin ? (
               <>
                 <GraduationCap size={22} color="white" />

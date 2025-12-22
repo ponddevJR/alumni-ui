@@ -8,7 +8,6 @@ import {
   BriefcaseBusiness,
   ChartPie,
   CircleUser,
-  Group,
   HelpCircle,
   LogOut,
   MenuIcon,
@@ -17,13 +16,10 @@ import {
   Search,
   ShieldUser,
   User,
-  UserCog2Icon,
   UserPen,
   Users,
-  Users2,
   X,
 } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
@@ -100,18 +96,18 @@ const Menu = () => {
       url: "/alumni-president/alumni-news",
       allowed: [5],
     },
-    {
-      title: "ช่วยเหลือ",
-      icon: <HelpCircle size={20} />,
-      url: "/users/help",
-      allowed: [1, 2, 3, 4],
-    },
-    {
-      title: "ช่วยเหลือ",
-      icon: <HelpCircle size={20} />,
-      url: "/alumni-president/help",
-      allowed: [5],
-    },
+    // {
+    //   title: "ช่วยเหลือ",
+    //   icon: <HelpCircle size={20} />,
+    //   url: "/users/help",
+    //   allowed: [1, 2, 3, 4],
+    // },
+    // {
+    //   title: "ช่วยเหลือ",
+    //   icon: <HelpCircle size={20} />,
+    //   url: "/alumni-president/help",
+    //   allowed: [5],
+    // },
   ];
 
   const [showResponsive, setShowResponsive] = useState(false);
@@ -152,9 +148,8 @@ const Menu = () => {
                 href="/users/profile"
                 className="w-[50px] h-[50px] overflow-hidden rounded-full border border-gray-300"
               >
-                <Image
+                <img
                   alt="user-profile"
-                  priority
                   src={
                     user?.profile
                       ? apiConfig.imgAPI + user?.profile

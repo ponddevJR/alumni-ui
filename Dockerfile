@@ -27,6 +27,6 @@ COPY --from=build /app/.next ./.next
 COPY --from=build /app/public ./public
 COPY package.json .
 
-EXPOSE 3001
+EXPOSE 3181
 
 CMD ["bun", "--bun", "run", "start"]

@@ -198,7 +198,7 @@ const SendMessage = () => {
         <div className="flex items-center gap-3">
           <Mail size={30} color="blue" />
           <p className="text-2xl font-bold text-blue-600">
-            ส่งขอความและประชาสัมพันธ์
+            ส่งข้อความและประชาสัมพันธ์
           </p>
         </div>
         <p className="text-gray-700">ส่งขอความหรือประชาสัมพันธ์ถึงศิษย์เก่า</p>
