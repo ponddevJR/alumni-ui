@@ -149,7 +149,7 @@ const AlumniProfile = () => {
     );
 
   return (
-    <div className="w-full flex flex-col p-5 mb-5">
+    <div className="w-full flex flex-col p-5 mb-5 bg-white">
       <div
         className={`relative w-full flex flex-col gap-7 lg:flex-row lg:items-start items-center p-5 px-8 rounded-lg bg-gradient-to-l ${
           roleId > 1

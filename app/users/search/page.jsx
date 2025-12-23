@@ -41,6 +41,7 @@ import { v4 as uuid } from "uuid";
 
 const SearchPage = () => {
   const { user } = useGetSession();
+  console.log("🚀 ~ SearchPage ~ user:", user)
   const [showSendEmail, setSendEmail] = useState(false);
   const [search, setSearch] = useState("");
   const [faculty, setFaculty] = useState("");
@@ -57,6 +58,7 @@ const SearchPage = () => {
   const [take, setTake] = useState(10);
   const [selectYearStart, setSelectYearStart] = useState("");
   const [selectYearEnd, setSelectYearEnd] = useState("");
+  const [type, setType] = useState(1);
 
   const fetchData = async (
     search = "",
@@ -86,7 +88,6 @@ const SearchPage = () => {
 
       if (res.status === 200) {
         setDataList(res?.data?.data);
-        console.log("🚀 ~ fetchData ~ res?.data?.data:", res?.data?.data);
         setTotalPage(res?.data?.totalPage);
         setResultLength(res?.data?.all);
       }
@@ -225,11 +226,14 @@ const SearchPage = () => {
 
               <span className="flex gap-1.5 lg:gap-2  lg:flex-row lg:items-center">
                 <select
+                  value={type}
+                  disabled={user?.roleId <= 1}
                   name=""
                   id=""
                   className="outline-0 text-sm w-full lg:w-1/4 p-2 rounded-md bg-gray-50 shadow-sm border border-gray-100"
                 >
                   <option value={1}>ศิษย์เก่า</option>
+                  <option value={2}>อาจารย์</option>
                 </select>
 
                 <>
@@ -430,7 +434,7 @@ const SearchPage = () => {
                         {departmentText(d?.departmentId)}
                       </td>
                       <td className="p-2.5 py-3 text-start">
-                        {`${d?.year_start} - ${d?.year_end}`}
+                        {`${d?.year_start || "-"} - ${d?.year_end || "-"}`}
                       </td>
                       <td className="">
                         <div className="flex items-center justify-center">

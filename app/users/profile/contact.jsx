@@ -147,7 +147,7 @@ const Contact = ({reload}) => {
     );
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col bg-white">
       <span className="relative flex items-center gap-2">
         <Contact2 size={30} color="blue" />
         <p className="text-lg font-bold">ช่องทางการติดต่อ</p>

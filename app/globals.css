@@ -1,8 +1,16 @@
 @import "tailwindcss";
 
+/* ===============================
+   Root & Theme Variables
+   =============================== */
+
 :root {
+  /* ใช้สีที่ contrast ชัดสำหรับ iOS */
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a1a;
+
+  /* ❗ สำคัญมาก: กัน iOS ปรับสีเอง */
+  color-scheme: light;
 }
 
 @theme inline {
@@ -12,33 +20,71 @@
   --font-mono: var(--font-geist-mono);
 }
 
+/* ===============================
+   Dark Mode (ควบคุมเอง ไม่ให้ iOS override)
+   =============================== */
+
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: #0b0b0b;
+    --foreground: #f1f1f1;
+
+    /* บอก browser ว่ารองรับ dark จริง */
+    color-scheme: dark;
   }
 }
+
+/* ===============================
+   Editor
+   =============================== */
 
 .ProseMirror {
   outline: none !important;
 }
 
+/* ===============================
+   iOS Text Rendering Fix
+   =============================== */
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
 body {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+
   background: var(--background);
   color: var(--foreground);
+
   font-family: Arial, Helvetica, sans-serif;
   scroll-behavior: smooth;
+
+  /* ❗ กัน iOS ทำ text จาง */
+  font-weight: 400;
 }
+
+/* ===============================
+   Form Elements
+   =============================== */
+
 input {
   outline: none;
+
+  /* ❗ iOS ชอบทำ input text เป็นสีเทา */
+  color: #111111;
+  background-color: #ffffff;
 }
+
 button {
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: transform 0.2s ease, opacity 0.2s ease;
 }
+
 button:active {
-  scale: 0.98;
+  transform: scale(0.98);
 }
-select{
+
+select {
   cursor: pointer;
 }

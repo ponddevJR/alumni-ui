@@ -86,7 +86,7 @@ const Page = () => {
 
       if (status === 429) {
         return alerts.err(
-          "คุณพยายามเข้าสู่ระบบบ่อยเกินไป กรุณาลองใหม่อีกครั้งภายหลัง"
+          "คุณพยายามเข้าสู่ระบบบ่อยเกินไป กรุณาลองใหม่อีกครั้งในอีก 10 นาที"
         );
       }
       alerts.err();
@@ -134,7 +134,7 @@ const Page = () => {
 
   return (
     <>
-      <div className="bg-gradient-to-br from-blue-100 to-blue-300 p-5 lg:p-10 w-screen h-screen flex items-center justify-center">
+      <div className="bg-gradient-to-br from-blue-100 to-blue-300 p-2.5 lg:p-10 w-screen h-screen flex items-center justify-center">
         <Image
           className="w-full h-full object-cover absolute top-0"
           alt="bg"
@@ -148,10 +148,10 @@ const Page = () => {
           className="z-50 lg:w-1/3 w-full bg-white rounded-md shadow-md shadow-gray-600 border border-gray-400 p-5 lg:p-8 flex flex-col items-center justify-center"
         >
           {/* logo */}
-          <Image alt="logo" priority src={logo} className="w-1/5 h-auto" />
+          <Image alt="logo" priority src={logo} className="w-28 lg:w-1/5 h-auto" />
 
           <h1 className="font-bold text-3xl mt-2 text-blue-700">RMU ALUMNI</h1>
-          <p className="mt-1 text-sm w-full text-center">
+          <p className="mt-1 text-sm lg:text-[1rem] w-full text-center">
             ระบบสารสนเทศเครือข่ายศิษย์เก่า มหาวิทยาลัยราชภัฏมหาสารคาม
           </p>
           {!firstLogin ? (
@@ -159,7 +159,7 @@ const Page = () => {
               {/* username */}
               <div className="mt-3 w-full flex flex-col gap-1.5">
                 <span className="flex items-center gap-3">
-                  <label className="">รหัสผู้ใช้งาน</label>
+                  <label className="text-black">รหัสผู้ใช้งาน</label>
                   <CircleQuestionMark
                     size={18}
                     color="gray"
@@ -301,7 +301,7 @@ const Page = () => {
           <button
             disabled={loading || isRedirect}
             className={`mt-7 hover:bg-gradient-to-l w-full rounded-lg ${
-              loading ? "flex-col lg:flex-row " : "flex"
+              loading ? "flex-col flex" : "flex"
             } items-center justify-center p-3 bg-gradient-to-r from-blue-500 to-blue-300 w-full text-white gap-3`}
           >
             {loading ? (
@@ -323,7 +323,7 @@ const Page = () => {
               </>
             )}
           </button>
-          <div className="mt-5 w-full  flex flex-col items-center gap-0.5 text-center text-xs">
+          <div className="mt-5 w-full text-black flex flex-col items-center gap-0.5 text-center text-xs">
             ฉันได้อ่าน เข้าใจและยอมรับ{" "}
             <span className="flex flex-col lg:flex-row w-full text-center justify-center gap-0.5">
               {" "}

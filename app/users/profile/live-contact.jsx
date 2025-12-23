@@ -120,7 +120,7 @@ const LiveContact = () => {
     );
 
   return (
-    <div className="w-full flex flex-col">
+    <div className="w-full flex flex-col bg-white">
       <span className="relative flex items-center gap-2">
         <MapPinHouse size={30} color="blue" />
         <p className="text-lg font-bold">ที่อยู่ที่ติดต่อได้</p>

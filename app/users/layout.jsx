@@ -27,7 +27,7 @@ const Layout = ({ children }) => {
 
   return (
     <AppProvider>
-      <div className="w-screen h-screen flex items-center">
+      <div className="w-screen h-screen flex items-center bg-white">
         <Menu />
         <div className="flex flex-col w-full h-full overflow-auto">
           {/* header */}
