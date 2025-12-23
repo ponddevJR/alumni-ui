@@ -41,7 +41,7 @@ import { v4 as uuid } from "uuid";
 
 const SearchPage = () => {
   const { user } = useGetSession();
-  console.log("🚀 ~ SearchPage ~ user:", user)
+  console.log("🚀 ~ SearchPage ~ user:", user);
   const [showSendEmail, setSendEmail] = useState(false);
   const [search, setSearch] = useState("");
   const [faculty, setFaculty] = useState("");
@@ -434,7 +434,9 @@ const SearchPage = () => {
                         {departmentText(d?.departmentId)}
                       </td>
                       <td className="p-2.5 py-3 text-start">
-                        {`${d?.year_start || "-"} - ${d?.year_end || "-"}`}
+                        {`${d?.year_start || "ไม่พบข้อมูล"} - ${
+                          d?.year_end || "ไม่พบข้อมูล"
+                        }`}
                       </td>
                       <td className="">
                         <div className="flex items-center justify-center">
@@ -503,7 +505,8 @@ const SearchPage = () => {
                           {" "}
                           <span className="flex items-center gap-2 text-gray-600 text-sm">
                             <Calendar size={15} color="gray" /> ปีการศึกษา
-                            (พ.ศ.) {d?.year_start} - {d?.year_end}
+                            (พ.ศ.) {d?.year_start || "ไม่พบข้อมูล"} -{" "}
+                            {d?.year_end || "ไม่พบข้อมูล"}
                           </span>
                           <span className="flex items-center gap-2 text-gray-600 text-sm">
                             <Clock size={15} color="gray" />
