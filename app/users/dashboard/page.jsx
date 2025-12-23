@@ -617,7 +617,7 @@ const Dashboard = () => {
 
           {/* coin */}
           <FadeInSection className="cursor-pointer bg-white border border-gray-200 hover:shadow-gray-400 transition-all duration-300 relative flex items-center justify-center gap-6 p-2.5 px-5 rounded-lg shadow-md border-l-6 flex-row-reverse border-l-yellow-500">
-            <button
+            {/* <button
               onClick={() => {
                 setPrevPath("/users/dashboard");
                 router.push("/users/dashboard/list-salary");
@@ -625,7 +625,7 @@ const Dashboard = () => {
               className="absolute top-2 right-2 text-gray-700"
             >
               <FaEllipsisH size={15} />
-            </button>
+            </button> */}
             <span className="rounded-full border p-2 border-yellow-500 bg-yellow-50">
               <Coins color="orange" size={30} />
             </span>

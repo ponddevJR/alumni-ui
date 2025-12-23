@@ -229,6 +229,7 @@ const SearchPage = () => {
                   value={type}
                   disabled={user?.roleId <= 1}
                   name=""
+                  onChange={(e) => setType(e.target.value)}
                   id=""
                   className="outline-0 text-sm w-full lg:w-1/4 p-2 rounded-md bg-gray-50 shadow-sm border border-gray-100"
                 >

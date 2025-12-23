@@ -148,10 +148,10 @@ const Page = () => {
           className="z-50 lg:w-1/3 w-full bg-white rounded-md shadow-md shadow-gray-600 border border-gray-400 p-5 lg:p-8 flex flex-col items-center justify-center"
         >
           {/* logo */}
-          <Image alt="logo" priority src={logo} className="w-28 lg:w-1/5 h-auto" />
+          <Image alt="logo" priority src={logo} className="w-24 lg:w-1/5 h-auto" />
 
           <h1 className="font-bold text-3xl mt-2 text-blue-700">RMU ALUMNI</h1>
-          <p className="mt-1 text-sm lg:text-[1rem] w-full text-center">
+          <p className="mt-1 text-sm md:text-[1rem] w-full text-center">
             ระบบสารสนเทศเครือข่ายศิษย์เก่า มหาวิทยาลัยราชภัฏมหาสารคาม
           </p>
           {!firstLogin ? (
