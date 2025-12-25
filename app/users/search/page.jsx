@@ -41,7 +41,6 @@ import { v4 as uuid } from "uuid";
 
 const SearchPage = () => {
   const { user } = useGetSession();
-  console.log("🚀 ~ SearchPage ~ user:", user);
   const [showSendEmail, setSendEmail] = useState(false);
   const [search, setSearch] = useState("");
   const [faculty, setFaculty] = useState("");

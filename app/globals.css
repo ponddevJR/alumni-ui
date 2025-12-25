@@ -88,3 +88,21 @@ button:active {
 select {
   cursor: pointer;
 }
+
+body,
+body * {
+  color: var(--foreground);
+}
+
+@supports (-webkit-touch-callout: none) {
+  body,
+  body * {
+    -webkit-text-fill-color: var(--foreground);
+    color: var(--foreground);
+    opacity: 1 !important;
+  }
+}
+
+:root {
+  forced-color-adjust: none;
+}
